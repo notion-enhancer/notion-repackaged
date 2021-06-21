@@ -1,0 +1,11 @@
+--- main/main.js	2021-04-28 23:47:55.854352025 +0200
++++ main/main.js.new	2021-04-28 23:55:08.414711920 +0200
+@@ -170,7 +170,7 @@
+             notionIpc.sendMainToNotionWindow(targetWindow, "notion:navigate-to-url", relativeUrl);
+             targetWindow.focus();
+         }
+-        else {
++        else if (relativeUrl) {
+             const win = createWindow_1.createWindow(relativeUrl);
+             win.focus();
+         }

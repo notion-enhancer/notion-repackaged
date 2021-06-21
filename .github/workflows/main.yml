@@ -1,0 +1,112 @@
+name: Port sources and Package
+
+on:
+  push:
+    branches: [main]
+    
+  release:
+    types: [created]
+
+  workflow_dispatch:
+    inputs: {}
+
+env:
+  NOTION_VERSION: 2.0.16
+  NOTION_DOWNLOAD_HASH: 9f72284086cda3977f7f569dff3974d5
+  NOTION_ENHANCER_COMMIT: b248ffa3bac393f267a4600d4e951aba8565f31e
+
+jobs:
+  make-vanilla-sources:
+    name: Make vanilla sources
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Download official Windows build
+        run: scripts/download-exe.sh
+      - name: Extract sources from Windows Build
+        run: scripts/extract-src.sh
+      - name: Zips sources dir with 7z
+        working-directory: build
+        run: 7z a vanilla-src.zip vanilla-src
+      - name: Save vanilla sources as artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: vanilla-sources
+          path: build/vanilla-src.zip
+  make-enhanced-sources:
+    name: Make enhanced sources
+    needs: [make-vanilla-sources]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Retrieve saved vanilla sources
+        uses: actions/download-artifact@v2
+        with:
+          name: vanilla-sources
+          path: build/vanilla-src.zip
+      - name: Unzips sources with 7z
+        working-directory: build
+        run: 7z x vanilla-src.zip
+      - name: Enhance extracted sources
+        run: scripts/enhance-src.sh
+      - name: Zips sources dir with 7z
+        working-directory: build
+        run: 7z a enhanced-src.zip enhanced-src
+      - name: Save enhanced sources as artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: enhanced-sources
+          path: build/enhanced-src.zip
+  build-app:
+    name: Build electron app
+    needs: [make-vanilla-sources, make-enhanced-sources]
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest, ubuntu-latest, macos-latest]
+        edition: [vanilla, enhanced]
+        exclude:
+          - os: windows-latest
+            edition: vanilla
+          - os: macos-latest
+            edition: vanilla
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 14
+      - name: Retrieve saved sources
+        uses: actions/download-artifact@v2
+        with:
+          name: '${{ matrix.edition }}-sources'
+          path: sources.zip
+      - name: Unzips sources with 7z
+        run: 7z x sources.zip
+      - name: Install build packages
+        working-directory: ${{ matrix.edition }}-src
+        run: npm install electron@11 electron-builder --save-dev
+      - name: Run electron-builder (Windows)
+        working-directory: ${{ matrix.edition }}-src
+        if: matrix.os == 'windows-latest'
+        run: node_modules/.bin/electron-builder --windows nsis
+      - name: Run electron-builder (Linux)
+        working-directory: ${{ matrix.edition }}-src
+        if: matrix.os == 'ubuntu-latest'
+        run: node_modules/.bin/electron-builder --linux deb rpm AppImage pacman
+      - name: Run electron-builder (MacOS)
+        working-directory: ${{ matrix.edition }}-src
+        if: matrix.os == 'macos-latest'
+        run: node_modules/.bin/electron-builder --macos dmg
+  cleanup:
+    if: ${{ false }}
+    name: Cleanup artifacts
+    continue-on-error: true
+    needs: [build-app]
+    strategy:
+      matrix:
+        edition: [vanilla, enhanced]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: geekyeggo/delete-artifact@v1
+        with:
+          name: '${{ matrix.edition }}-sources'
