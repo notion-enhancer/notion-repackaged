@@ -70,7 +70,7 @@ jobs:
       - name: Retrieve saved sources
         uses: actions/download-artifact@v2
         with:
-          name: 'vanilla-sources'
+          name: vanilla-sources
           path: sources.zip
       - name: Unzips sources with 7z
         run: 7z x sources.zip
@@ -87,10 +87,10 @@ jobs:
         with:
           name: vanilla-linux
           path: |
-            dist/**.AppImage
-            dist/**.deb
-            dist/**.rpm
-            dist/**.pacman
+            vanilla-src/dist/**.AppImage
+            vanilla-src/dist/**.deb
+            vanilla-src/dist/**.rpm
+            vanilla-src/dist/**.pacman
   build-enhanced-linux:
     name: Build enhanced app for Linux
     needs: [make-enhanced-sources]
@@ -103,7 +103,7 @@ jobs:
       - name: Retrieve saved sources
         uses: actions/download-artifact@v2
         with:
-          name: 'enhanced-sources'
+          name: enhanced-sources
           path: sources.zip
       - name: Unzips sources with 7z
         run: 7z x sources.zip
@@ -120,10 +120,10 @@ jobs:
         with:
           name: enhanced-linux
           path: |
-            dist/**.AppImage
-            dist/**.deb
-            dist/**.rpm
-            dist/**.pacman
+            enhanced-src/dist/**.AppImage
+            enhanced-src/dist/**.deb
+            enhanced-src/dist/**.rpm
+            enhanced-src/dist/**.pacman
   build-enhanced-macos:
     name: Build enhanced app for MacOS
     needs: [make-enhanced-sources]
