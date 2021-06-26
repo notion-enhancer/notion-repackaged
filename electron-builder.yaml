@@ -8,6 +8,10 @@ win:
     - zip
     - nsis
 
+macos:
+  target:
+    - dmg
+
 linux:
   category: Office;Utility;
   maintainer: jaime@jamezrin.name

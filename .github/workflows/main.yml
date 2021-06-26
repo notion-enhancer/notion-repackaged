@@ -114,7 +114,7 @@ jobs:
         run: npm install electron@11 electron-builder --save-dev
       - name: Run electron-builder
         working-directory: enhanced-src
-        run: node_modules/.bin/electron-builder --linux deb rpm AppImage pacman --config ../electron-builder.yaml
+        run: node_modules/.bin/electron-builder --linux --config ../electron-builder.yaml
       - name: Store artifacts
         uses: actions/upload-artifact@v2
         with:
@@ -145,7 +145,7 @@ jobs:
         run: npm install electron@11 electron-builder --save-dev
       - name: Run electron-builder
         working-directory: enhanced-src
-        run: node_modules/.bin/electron-builder --macos dmg --config ../electron-builder.yaml
+        run: node_modules/.bin/electron-builder --macos --config ../electron-builder.yaml
       - name: Store artifacts
         uses: actions/upload-artifact@v2
         with:
@@ -173,7 +173,7 @@ jobs:
         run: npm install electron@11 electron-builder --save-dev
       - name: Run electron-builder
         working-directory: enhanced-src
-        run: node_modules/.bin/electron-builder --windows nsis --config ../electron-builder.yaml
+        run: node_modules/.bin/electron-builder --windows --config ../electron-builder.yaml
       - name: Store artifacts
         uses: actions/upload-artifact@v2
         with:
