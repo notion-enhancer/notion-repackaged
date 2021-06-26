@@ -75,18 +75,13 @@ jobs:
       - name: Unzips sources with 7z
         run: 7z x sources.zip
       - name: Install system build dependencies
-        run: |
-          sudo apt-get install --no-install-recommends -y libopenjp2-tools
-          sudo apt-get install --no-install-recommends -y rpm
-          sudo apt-get install --no-install-recommends -y libarchive-tools
+        run: sudo apt-get install --no-install-recommends -y libopenjp2-tools rpm libarchive-tools
       - name: Install dependencies including electron-builder
         working-directory: vanilla-src
         run: npm install electron@11 electron-builder --save-dev
       - name: Run electron-builder (Linux)
         working-directory: vanilla-src
-        run: node_modules/.bin/electron-builder \
-          --linux deb rpm AppImage pacman \
-          --config ${{ env.workspace-directory }}/electron-builder.yaml
+        run: node_modules/.bin/electron-builder --linux deb rpm AppImage pacman --config ../electron-builder.yaml
       - name: Store artifacts
         uses: actions/upload-artifact@v2
         with:
@@ -96,11 +91,36 @@ jobs:
             **.deb
             **.rpm
             **.pacman
+  build-enhanced-linux:
+    name: Build enhanced app for Linux
+    needs: [make-enhanced-sources]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test
+        run: echo "Working"
+  build-enhanced-macos:
+    name: Build enhanced app for MacOS
+    needs: [make-enhanced-sources]
+    runs-on: macos-latest
+    steps:
+      - name: Test
+        run: echo "Working"
+  build-enhanced-windows:
+    name: Build enhanced app for Windows
+    needs: [make-enhanced-sources]
+    runs-on: windows-latest
+    steps:
+      - name: Test
+        run: echo "Working"
   cleanup:
     if: ${{ false }}
     name: Cleanup artifacts
     continue-on-error: true
-    needs: [build-vanilla-linux]
+    needs:
+      - build-vanilla-linux
+      - build-enhanced-linux
+      - build-enhanced-macos
+      - build-enhanced-windows
     strategy:
       matrix:
         edition: [vanilla, enhanced]
