@@ -181,7 +181,6 @@ jobs:
           path: |
             enhanced-src/dist/**.exe
   cleanup:
-    if: ${{ false }}
     name: Cleanup artifacts
     continue-on-error: true
     needs:
