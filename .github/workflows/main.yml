@@ -14,6 +14,7 @@ env:
   NOTION_VERSION: 2.0.16
   NOTION_DOWNLOAD_HASH: 9f72284086cda3977f7f569dff3974d5
   NOTION_ENHANCER_COMMIT: b248ffa3bac393f267a4600d4e951aba8565f31e
+  NOTION_REPACKAGER_DEBUG: true
 
 jobs:
   make-vanilla-sources:
@@ -57,19 +58,10 @@ jobs:
         with:
           name: enhanced-sources
           path: build/enhanced-src.zip
-  build-app:
-    name: Build electron app
-    needs: [make-vanilla-sources, make-enhanced-sources]
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [windows-latest, ubuntu-latest, macos-latest]
-        edition: [vanilla, enhanced]
-        exclude:
-          - os: windows-latest
-            edition: vanilla
-          - os: macos-latest
-            edition: vanilla
+  build-vanilla-linux:
+    name: Build vanilla app for Linux
+    needs: [make-vanilla-sources]
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
@@ -78,25 +70,32 @@ jobs:
       - name: Retrieve saved sources
         uses: actions/download-artifact@v2
         with:
-          name: '${{ matrix.edition }}-sources'
+          name: 'vanilla-sources'
           path: sources.zip
       - name: Unzips sources with 7z
         run: 7z x sources.zip
-      - name: Install build packages
-        working-directory: ${{ matrix.edition }}-src
+      - name: Install system build dependencies
+        run: |
+          sudo apt-get install --no-install-recommends -y libopenjp2-tools
+          sudo apt-get install --no-install-recommends -y rpm
+          sudo apt-get install --no-install-recommends -y bsdtar
+      - name: Install dependencies including electron-builder
+        working-directory: vanilla-src
         run: npm install electron@11 electron-builder --save-dev
-      - name: Run electron-builder (Windows)
-        working-directory: ${{ matrix.edition }}-src
-        if: matrix.os == 'windows-latest'
-        run: node_modules/.bin/electron-builder --windows nsis
       - name: Run electron-builder (Linux)
-        working-directory: ${{ matrix.edition }}-src
-        if: matrix.os == 'ubuntu-latest'
-        run: node_modules/.bin/electron-builder --linux deb rpm AppImage pacman
-      - name: Run electron-builder (MacOS)
-        working-directory: ${{ matrix.edition }}-src
-        if: matrix.os == 'macos-latest'
-        run: node_modules/.bin/electron-builder --macos dmg
+        working-directory: vanilla-src
+        run: node_modules/.bin/electron-builder \
+          --linux deb rpm AppImage pacman \
+          --config ${{ env.workspace-directory }}/electron-builder.yaml
+      - name: Store artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: my-artifact
+          path: |
+            **.AppImage
+            **.deb
+            **.rpm
+            **.pacman
   cleanup:
     if: ${{ false }}
     name: Cleanup artifacts

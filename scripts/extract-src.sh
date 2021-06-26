@@ -42,7 +42,8 @@ log "Patching source for fixes..."
 sed -i 's|process.platform === "win32"|process.platform !== "darwin"|g' main/main.js
 PATCHED_PACKAGE_JSON=$(jq '
   .dependencies.cld="2.7.0" |
-  .name="notion-app"' package.json)
+  .name="notion-app" |
+  .homepage="https://github.com/jamezrin/notion-repackaged"' package.json)
 echo "${PATCHED_PACKAGE_JSON}" > package.json
 
 log "Removing package node_modules..."
