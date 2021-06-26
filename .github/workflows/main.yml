@@ -78,7 +78,7 @@ jobs:
         run: |
           sudo apt-get install --no-install-recommends -y libopenjp2-tools
           sudo apt-get install --no-install-recommends -y rpm
-          sudo apt-get install --no-install-recommends -y bsdtar
+          sudo apt-get install --no-install-recommends -y libarchive-tools
       - name: Install dependencies including electron-builder
         working-directory: vanilla-src
         run: npm install electron@11 electron-builder --save-dev
