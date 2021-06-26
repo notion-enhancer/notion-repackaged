@@ -129,15 +129,57 @@ jobs:
     needs: [make-enhanced-sources]
     runs-on: macos-latest
     steps:
-      - name: Test
-        run: echo "Working"
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 14
+      - name: Retrieve saved sources
+        uses: actions/download-artifact@v2
+        with:
+          name: enhanced-sources
+          path: sources.zip
+      - name: Unzips sources with 7z
+        run: 7z x sources.zip
+      - name: Install dependencies including electron-builder
+        working-directory: enhanced-src
+        run: npm install electron@11 electron-builder --save-dev
+      - name: Run electron-builder
+        working-directory: enhanced-src
+        run: node_modules/.bin/electron-builder --macos dmg --config ../electron-builder.yaml
+      - name: Store artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: enhanced-macos
+          path: |
+            enhanced-src/dist/**.dmg
   build-enhanced-windows:
     name: Build enhanced app for Windows
     needs: [make-enhanced-sources]
     runs-on: windows-latest
     steps:
-      - name: Test
-        run: echo "Working"
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 14
+      - name: Retrieve saved sources
+        uses: actions/download-artifact@v2
+        with:
+          name: enhanced-sources
+          path: sources.zip
+      - name: Unzips sources with 7z
+        run: 7z x sources.zip
+      - name: Install dependencies including electron-builder
+        working-directory: enhanced-src
+        run: npm install electron@11 electron-builder --save-dev
+      - name: Run electron-builder
+        working-directory: enhanced-src
+        run: node_modules/.bin/electron-builder --windows nsis --config ../electron-builder.yaml
+      - name: Store artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: enhanced-windows
+          path: |
+            enhanced-src/dist/**.exe
   cleanup:
     if: ${{ false }}
     name: Cleanup artifacts
