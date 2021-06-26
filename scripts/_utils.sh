@@ -31,3 +31,9 @@ function workspace-dir-pushd() {
   mkdir -p "${WORKSPACE_DIR}/build"
   pushd "${WORKSPACE_DIR}/build" > /dev/null
 }
+
+function check-debug-expands() {
+  if [ "${NOTION_REPACKAGER_DEBUG}" = true ]; then
+    set -x
+  fi
+}

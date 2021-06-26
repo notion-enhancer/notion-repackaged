@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
-set -ex
+set -e
 
 source `dirname $0`/_utils.sh
+check-debug-expands
 workspace-dir-pushd
 
 check-cmd curl

@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
-set -ex
+set -e
 
 source `dirname $0`/_utils.sh
+check-debug-expands
 workspace-dir-pushd
 
 check-cmd jq
@@ -53,12 +54,13 @@ for patchable_file in $(find . -type d \( -path ./${NOTION_EMBEDDED_NAME} -o -pa
 done
 
 log "Swapping the original icon with the enhancer's one..."
-mv icon.icns original_icon.icns
-mv icon.png original_icon.png
-mv icon.ico original_icon.ico
-#enhancer_icon_path="mods/core/icons/mac+linux.png"
-enhancer_icon_path="mods/core/icons/windows.ico"
-cp "${NOTION_EMBEDDED_NAME}/${enhancer_icon_path}" icon.ico
-convert "icon.ico[0]" "icon.png"
+mkdir -p vanilla
+mv icon.icns vanilla/icon.icns
+mv icon.png vanilla/icon.png
+mv icon.ico vanilla/icon.ico
+
+enhancer_icon_path="mods/core/icons/mac+linux.png"
+convert "${NOTION_EMBEDDED_NAME}/${enhancer_icon_path}" \
+  -resize 512x512 "icon.png"
 
 popd > /dev/null
