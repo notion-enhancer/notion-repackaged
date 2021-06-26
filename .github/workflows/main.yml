@@ -3,7 +3,7 @@ name: Port sources and Package
 on:
   push:
     branches: [main]
-    
+
   release:
     types: [created]
 
@@ -100,7 +100,7 @@ jobs:
     if: ${{ false }}
     name: Cleanup artifacts
     continue-on-error: true
-    needs: [build-app]
+    needs: [build-vanilla-linux]
     strategy:
       matrix:
         edition: [vanilla, enhanced]
