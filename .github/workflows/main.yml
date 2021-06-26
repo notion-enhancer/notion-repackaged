@@ -79,25 +79,51 @@ jobs:
       - name: Install dependencies including electron-builder
         working-directory: vanilla-src
         run: npm install electron@11 electron-builder --save-dev
-      - name: Run electron-builder (Linux)
+      - name: Run electron-builder
         working-directory: vanilla-src
         run: node_modules/.bin/electron-builder --linux deb rpm AppImage pacman --config ../electron-builder.yaml
       - name: Store artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: my-artifact
+          name: vanilla-linux
           path: |
-            **.AppImage
-            **.deb
-            **.rpm
-            **.pacman
+            dist/**.AppImage
+            dist/**.deb
+            dist/**.rpm
+            dist/**.pacman
   build-enhanced-linux:
     name: Build enhanced app for Linux
     needs: [make-enhanced-sources]
     runs-on: ubuntu-latest
     steps:
-      - name: Test
-        run: echo "Working"
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 14
+      - name: Retrieve saved sources
+        uses: actions/download-artifact@v2
+        with:
+          name: 'enhanced-sources'
+          path: sources.zip
+      - name: Unzips sources with 7z
+        run: 7z x sources.zip
+      - name: Install system build dependencies
+        run: sudo apt-get install --no-install-recommends -y libopenjp2-tools rpm libarchive-tools
+      - name: Install dependencies including electron-builder
+        working-directory: enhanced-src
+        run: npm install electron@11 electron-builder --save-dev
+      - name: Run electron-builder
+        working-directory: enhanced-src
+        run: node_modules/.bin/electron-builder --linux deb rpm AppImage pacman --config ../electron-builder.yaml
+      - name: Store artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: enhanced-linux
+          path: |
+            dist/**.AppImage
+            dist/**.deb
+            dist/**.rpm
+            dist/**.pacman
   build-enhanced-macos:
     name: Build enhanced app for MacOS
     needs: [make-enhanced-sources]
