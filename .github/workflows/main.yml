@@ -34,6 +34,7 @@ jobs:
         with:
           name: vanilla-sources
           path: build/vanilla-src.zip
+
   make-enhanced-sources:
     name: Make enhanced sources
     needs: [make-vanilla-sources]
@@ -58,6 +59,7 @@ jobs:
         with:
           name: enhanced-sources
           path: build/enhanced-src.zip
+
   build-vanilla-linux:
     name: Build vanilla app for Linux
     needs: [make-vanilla-sources]
@@ -88,15 +90,7 @@ jobs:
       - name: Run electron-builder
         working-directory: vanilla-src
         run: node_modules/.bin/electron-builder --linux deb rpm AppImage pacman --config ../electron-builder.yaml
-      - name: Store artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: vanilla-linux
-          path: |
-            vanilla-src/dist/**.AppImage
-            vanilla-src/dist/**.deb
-            vanilla-src/dist/**.rpm
-            vanilla-src/dist/**.pacman
+
   build-enhanced-linux:
     name: Build enhanced app for Linux
     needs: [make-enhanced-sources]
@@ -127,15 +121,7 @@ jobs:
       - name: Run electron-builder
         working-directory: enhanced-src
         run: node_modules/.bin/electron-builder --linux -c.asar=false --config ../electron-builder.yaml
-      - name: Store artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: enhanced-linux
-          path: |
-            enhanced-src/dist/**.AppImage
-            enhanced-src/dist/**.deb
-            enhanced-src/dist/**.rpm
-            enhanced-src/dist/**.pacman
+
   build-enhanced-macos:
     name: Build enhanced app for MacOS
     needs: [make-enhanced-sources]
@@ -164,12 +150,7 @@ jobs:
       - name: Run electron-builder
         working-directory: enhanced-src
         run: node_modules/.bin/electron-builder --macos -c.asar=false --config ../electron-builder.yaml
-      - name: Store artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: enhanced-macos
-          path: |
-            enhanced-src/dist/**.dmg
+
   build-enhanced-windows:
     name: Build enhanced app for Windows
     needs: [make-enhanced-sources]
@@ -198,12 +179,7 @@ jobs:
       - name: Run electron-builder
         working-directory: enhanced-src
         run: node_modules/.bin/electron-builder --windows -c.asar=false --config ../electron-builder.yaml
-      - name: Store artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: enhanced-windows
-          path: |
-            enhanced-src/dist/**.exe
+
   cleanup:
     name: Cleanup artifacts
     continue-on-error: true
