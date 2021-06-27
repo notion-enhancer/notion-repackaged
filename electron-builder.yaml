@@ -8,7 +8,6 @@ protocols:
       - notion
 
 win:
-  asar: false
   target:
     - nsis
     - zip
