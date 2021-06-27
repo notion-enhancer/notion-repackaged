@@ -15,12 +15,15 @@ fi
 
 pushd "${NOTION_ENHANCED_SRC_NAME}" > /dev/null
 
-log "Install dependencies including electron-builder..."
+log "Installing dependencies..."
+npm install
+
+log "Install electron and electron-builder..."
 npm install electron@11 electron-builder --save-dev
 
 log "Running electron-builder..."
 node_modules/.bin/electron-builder \
-  --linux deb rpm AppImage pacman \
+  --linux pacman \
   --config $WORKSPACE_DIR/electron-builder.yaml
 
 popd > /dev/null

@@ -76,8 +76,11 @@ jobs:
         run: 7z x sources.zip
       - name: Install system build dependencies
         run: sudo apt-get install --no-install-recommends -y libopenjp2-tools rpm libarchive-tools
-      - name: Install dependencies including electron-builder
-        working-directory: vanilla-src
+      - name: Install dependencies
+        working-directory: enhanced-src
+        run: npm install
+      - name: Install electron and electron-builder
+        working-directory: enhanced-src
         run: npm install electron@11 electron-builder --save-dev
       - name: Run electron-builder
         working-directory: vanilla-src
@@ -109,7 +112,10 @@ jobs:
         run: 7z x sources.zip
       - name: Install system build dependencies
         run: sudo apt-get install --no-install-recommends -y libopenjp2-tools rpm libarchive-tools
-      - name: Install dependencies including electron-builder
+      - name: Install dependencies
+        working-directory: enhanced-src
+        run: npm install
+      - name: Install electron and electron-builder
         working-directory: enhanced-src
         run: npm install electron@11 electron-builder --save-dev
       - name: Run electron-builder
