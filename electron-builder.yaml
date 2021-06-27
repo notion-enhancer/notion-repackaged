@@ -1,3 +1,6 @@
+---
+appId: com.github.notion-repackaged
+
 protocols:
   - name: Notion
     schemes:
@@ -5,20 +8,26 @@ protocols:
 
 win:
   target:
-    - zip
     - nsis
+    - zip
 
 mac:
+  category: public.app-category.productivity
   target:
     - dmg
+    - zip
 
 linux:
   category: Office;Utility;
   maintainer: jaime@jamezrin.name
   mimeTypes:
     - x-scheme-handler/notion
+  desktop:
+    StartupNotify: 'true'
+  synopsis: The all-in-one workspace for your notes and tasks
   target:
     - AppImage
     - deb
     - rpm
     - pacman
+    - zip
