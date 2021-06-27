@@ -59,11 +59,30 @@ jobs:
           name: enhanced-sources
           path: build/enhanced-src.zip
 
-  build-vanilla-linux:
-    name: Build vanilla app for Linux
-    needs: [make-vanilla-sources]
-    timeout-minutes: 10
-    runs-on: ubuntu-latest
+  build-app:
+    name: Build app
+    needs: [make-vanilla-sources, make-enhanced-sources]
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        target: [windows, linux, macos]
+        edition: [vanilla, enhanced]
+        include:
+          - target: windows
+            os: windows-latest
+          - target: linux
+            os: ubuntu-latest
+          - target: macos
+            os: macos-latest
+          - edition: vanilla
+            appName: Notion
+          - edition: enhanced
+            appName: Notion Enhanced
+        exclude:
+          - target: windows
+            edition: vanilla
+          - target: macos
+            edition: vanilla
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
@@ -72,133 +91,37 @@ jobs:
       - name: Retrieve saved sources
         uses: actions/download-artifact@v2
         with:
-          name: vanilla-sources
+          name: ${{ matrix.edition }}-sources
           path: sources.zip
       - name: Unzip sources with 7z
         run: 7z x sources.zip
-      - name: Install system build dependencies
+      - name: Install Linux build dependencies
+        if: matrix.os == 'ubuntu-latest'
         run: sudo apt-get install --no-install-recommends -y libopenjp2-tools rpm libarchive-tools
       - name: Install dependencies
-        working-directory: vanilla-src
+        working-directory: ${{ matrix.edition }}-src
         run: npm install
       - name: Run patch-package
-        working-directory: vanilla-src
+        working-directory: ${{ matrix.edition }}-src
         run: node_modules/.bin/patch-package
       - name: Install electron and electron-builder
-        working-directory: vanilla-src
+        working-directory: ${{ matrix.edition }}-src
         run: npm install electron@11 electron-builder --save-dev
       - name: Run electron-builder
-        working-directory: vanilla-src
+        working-directory: ${{ matrix.edition }}-src
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: node_modules/.bin/electron-builder --linux --config ../electron-builder.yaml
-
-  build-enhanced-linux:
-    name: Build enhanced app for Linux
-    needs: [make-enhanced-sources]
-    timeout-minutes: 10
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
-        with:
-          node-version: 14
-      - name: Retrieve saved sources
-        uses: actions/download-artifact@v2
-        with:
-          name: enhanced-sources
-          path: sources.zip
-      - name: Unzip sources with 7z
-        run: 7z x sources.zip
-      - name: Install system build dependencies
-        run: sudo apt-get install --no-install-recommends -y libopenjp2-tools rpm libarchive-tools
-      - name: Install dependencies
-        working-directory: enhanced-src
-        run: npm install
-      - name: Run patch-package
-        working-directory: enhanced-src
-        run: node_modules/.bin/patch-package
-      - name: Install electron and electron-builder
-        working-directory: enhanced-src
-        run: npm install electron@11 electron-builder --save-dev
-      - name: Run electron-builder
-        working-directory: enhanced-src
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: node_modules/.bin/electron-builder --linux -c.asar=false --config ../electron-builder.yaml
-
-  build-enhanced-macos:
-    name: Build enhanced app for MacOS
-    needs: [make-enhanced-sources]
-    timeout-minutes: 10
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
-        with:
-          node-version: 14
-      - name: Retrieve saved sources
-        uses: actions/download-artifact@v2
-        with:
-          name: enhanced-sources
-          path: sources.zip
-      - name: Unzip sources with 7z
-        run: 7z x sources.zip
-      - name: Install dependencies
-        working-directory: enhanced-src
-        run: npm install
-      - name: Run patch-package
-        working-directory: enhanced-src
-        run: node_modules/.bin/patch-package
-      - name: Install electron and electron-builder
-        working-directory: enhanced-src
-        run: npm install electron@11 electron-builder --save-dev
-      - name: Run electron-builder
-        working-directory: enhanced-src
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: node_modules/.bin/electron-builder --macos -c.asar=false --config ../electron-builder.yaml
-
-  build-enhanced-windows:
-    name: Build enhanced app for Windows
-    needs: [make-enhanced-sources]
-    timeout-minutes: 10
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
-        with:
-          node-version: 14
-      - name: Retrieve saved sources
-        uses: actions/download-artifact@v2
-        with:
-          name: enhanced-sources
-          path: sources.zip
-      - name: Unzip sources with 7z
-        run: 7z x sources.zip
-      - name: Install dependencies
-        working-directory: enhanced-src
-        run: npm install
-      - name: Run patch-package
-        working-directory: enhanced-src
-        run: node_modules/.bin/patch-package
-      - name: Install electron and electron-builder
-        working-directory: enhanced-src
-        run: npm install electron@11 electron-builder --save-dev
-      - name: Run electron-builder
-        working-directory: enhanced-src
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: node_modules/.bin/electron-builder --windows -c.asar=false --config ../electron-builder.yaml
+        run: >-
+          node_modules/.bin/electron-builder
+          --${{ matrix.target }}
+          -c.asar=${{ matrix.edition == 'vanilla' }}
+          -c.productName="${{ matrix.appName }}"
+          --config ../electron-builder.yaml
 
   cleanup:
     name: Cleanup artifacts
     if: always()
-    needs:
-      - build-vanilla-linux
-      - build-enhanced-linux
-      - build-enhanced-macos
-      - build-enhanced-windows
+    needs: [build-app]
     strategy:
       matrix:
         edition: [vanilla, enhanced]
