@@ -13,7 +13,6 @@ env:
   NOTION_ENHANCER_COMMIT: b248ffa3bac393f267a4600d4e951aba8565f31e
   NOTION_REPACKAGED_REVISION: 1
   NOTION_REPACKAGED_DEBUG: true
-  NOTION_REPACKAGED_REPO: https://github.com/jamezrin/tests-github-actions
 
 jobs:
   make-vanilla-sources:
@@ -98,7 +97,6 @@ jobs:
       - name: Install Linux build dependencies
         if: matrix.os == 'ubuntu-latest'
         run: sudo apt-get install --no-install-recommends -y libopenjp2-tools rpm libarchive-tools
-      
       - name: Install dependencies
         working-directory: ${{ matrix.edition }}-src
         run: npm install
