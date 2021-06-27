@@ -195,7 +195,7 @@ jobs:
 
   cleanup:
     name: Cleanup artifacts
-    continue-on-error: true
+    if: always()
     needs:
       - build-vanilla-linux
       - build-enhanced-linux
