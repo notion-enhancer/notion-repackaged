@@ -79,6 +79,9 @@ jobs:
       - name: Install dependencies
         working-directory: vanilla-src
         run: npm install
+      - name: Run patch-package
+        working-directory: vanilla-src
+        run: node_modules/.bin/patch-package
       - name: Install electron and electron-builder
         working-directory: vanilla-src
         run: npm install electron@11 electron-builder --save-dev
@@ -115,6 +118,9 @@ jobs:
       - name: Install dependencies
         working-directory: enhanced-src
         run: npm install
+      - name: Run patch-package
+        working-directory: enhanced-src
+        run: node_modules/.bin/patch-package
       - name: Install electron and electron-builder
         working-directory: enhanced-src
         run: npm install electron@11 electron-builder --save-dev
@@ -149,6 +155,9 @@ jobs:
       - name: Install dependencies
         working-directory: enhanced-src
         run: npm install
+      - name: Run patch-package
+        working-directory: enhanced-src
+        run: node_modules/.bin/patch-package
       - name: Install electron and electron-builder
         working-directory: enhanced-src
         run: npm install electron@11 electron-builder --save-dev
@@ -180,6 +189,9 @@ jobs:
       - name: Install dependencies
         working-directory: enhanced-src
         run: npm install
+      - name: Run patch-package
+        working-directory: enhanced-src
+        run: node_modules/.bin/patch-package
       - name: Install electron and electron-builder
         working-directory: enhanced-src
         run: npm install electron@11 electron-builder --save-dev
