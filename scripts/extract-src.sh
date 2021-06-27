@@ -46,6 +46,7 @@ PATCHED_PACKAGE_JSON=$(jq \
   '.dependencies.cld="2.7.0" | 
   .name="notion-app" | 
   .homepage=$homepage | 
+  .repository=$homepage |
   .version=$version' package.json
 )
 echo "${PATCHED_PACKAGE_JSON}" > package.json
