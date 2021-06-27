@@ -26,7 +26,7 @@ jobs:
         run: scripts/download-exe.sh
       - name: Extract sources from Windows Build
         run: scripts/extract-src.sh
-      - name: Zips sources dir with 7z
+      - name: Zip sources dir with 7z
         working-directory: build
         run: 7z a vanilla-src.zip vanilla-src
       - name: Save vanilla sources as artifact
@@ -45,12 +45,12 @@ jobs:
         with:
           name: vanilla-sources
           path: build/vanilla-src.zip
-      - name: Unzips sources with 7z
+      - name: Unzip sources with 7z
         working-directory: build
         run: 7z x vanilla-src.zip
       - name: Enhance extracted sources
         run: scripts/enhance-src.sh
-      - name: Zips sources dir with 7z
+      - name: Zip sources dir with 7z
         working-directory: build
         run: 7z a enhanced-src.zip enhanced-src
       - name: Save enhanced sources as artifact
@@ -72,15 +72,15 @@ jobs:
         with:
           name: vanilla-sources
           path: sources.zip
-      - name: Unzips sources with 7z
+      - name: Unzip sources with 7z
         run: 7z x sources.zip
       - name: Install system build dependencies
         run: sudo apt-get install --no-install-recommends -y libopenjp2-tools rpm libarchive-tools
       - name: Install dependencies
-        working-directory: enhanced-src
+        working-directory: vanilla-src
         run: npm install
       - name: Install electron and electron-builder
-        working-directory: enhanced-src
+        working-directory: vanilla-src
         run: npm install electron@11 electron-builder --save-dev
       - name: Run electron-builder
         working-directory: vanilla-src
@@ -108,7 +108,7 @@ jobs:
         with:
           name: enhanced-sources
           path: sources.zip
-      - name: Unzips sources with 7z
+      - name: Unzip sources with 7z
         run: 7z x sources.zip
       - name: Install system build dependencies
         run: sudo apt-get install --no-install-recommends -y libopenjp2-tools rpm libarchive-tools
@@ -144,9 +144,12 @@ jobs:
         with:
           name: enhanced-sources
           path: sources.zip
-      - name: Unzips sources with 7z
+      - name: Unzip sources with 7z
         run: 7z x sources.zip
-      - name: Install dependencies including electron-builder
+      - name: Install dependencies
+        working-directory: enhanced-src
+        run: npm install
+      - name: Install electron and electron-builder
         working-directory: enhanced-src
         run: npm install electron@11 electron-builder --save-dev
       - name: Run electron-builder
@@ -172,9 +175,12 @@ jobs:
         with:
           name: enhanced-sources
           path: sources.zip
-      - name: Unzips sources with 7z
+      - name: Unzip sources with 7z
         run: 7z x sources.zip
-      - name: Install dependencies including electron-builder
+      - name: Install dependencies
+        working-directory: enhanced-src
+        run: npm install
+      - name: Install electron and electron-builder
         working-directory: enhanced-src
         run: npm install electron@11 electron-builder --save-dev
       - name: Run electron-builder

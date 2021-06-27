@@ -8,7 +8,7 @@ win:
     - zip
     - nsis
 
-macos:
+mac:
   target:
     - dmg
 
