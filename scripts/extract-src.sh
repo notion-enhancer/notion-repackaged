@@ -40,10 +40,14 @@ pushd "${NOTION_VANILLA_SRC_NAME}" > /dev/null
 
 log "Patching source for fixes..."
 sed -i 's|process.platform === "win32"|process.platform !== "darwin"|g' main/main.js
-PATCHED_PACKAGE_JSON=$(jq '
-  .dependencies.cld="2.7.0" |
-  .name="notion-app" |
-  .homepage="https://github.com/jamezrin/notion-repackaged"' package.json)
+PATCHED_PACKAGE_JSON=$(jq \
+  --arg version "${NOTION_VERSION_REV}" \
+  --arg homepage "${NOTION_REPACKAGED_HOMEPAGE}" \
+  '.dependencies.cld="2.7.0" | 
+  .name="notion-app" | 
+  .homepage=$homepage | 
+  .version=$version' package.json
+)
 echo "${PATCHED_PACKAGE_JSON}" > package.json
 
 log "Removing package node_modules..."

@@ -15,6 +15,10 @@ NOTION_VANILLA_SRC_NAME="vanilla-src"
 NOTION_ENHANCED_SRC_NAME="enhanced-src"
 NOTION_EMBEDDED_NAME="embedded_enhancer"
 
+NOTION_REVISION="${NOTION_REVISION:-1}"
+NOTION_VERSION_REV="${NOTION_VERSION}-${NOTION_REVISION}"
+NOTION_REPACKAGED_HOMEPAGE="https://github.com/jamezrin/notion-repackaged"
+
 function log() {
   caller=`basename "$0"`
   echo "[${caller%.*}]: $@"

@@ -12,6 +12,7 @@ on:
 
 env:
   NOTION_VERSION: 2.0.16
+  NOTION_REVISION: 1
   NOTION_DOWNLOAD_HASH: 9f72284086cda3977f7f569dff3974d5
   NOTION_ENHANCER_COMMIT: b248ffa3bac393f267a4600d4e951aba8565f31e
   NOTION_REPACKAGER_DEBUG: true
@@ -63,6 +64,7 @@ jobs:
   build-vanilla-linux:
     name: Build vanilla app for Linux
     needs: [make-vanilla-sources]
+    timeout-minutes: 10
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -94,6 +96,7 @@ jobs:
   build-enhanced-linux:
     name: Build enhanced app for Linux
     needs: [make-enhanced-sources]
+    timeout-minutes: 10
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -125,6 +128,7 @@ jobs:
   build-enhanced-macos:
     name: Build enhanced app for MacOS
     needs: [make-enhanced-sources]
+    timeout-minutes: 10
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
@@ -154,6 +158,7 @@ jobs:
   build-enhanced-windows:
     name: Build enhanced app for Windows
     needs: [make-enhanced-sources]
+    timeout-minutes: 10
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
