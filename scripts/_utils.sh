@@ -15,8 +15,8 @@ NOTION_VANILLA_SRC_NAME="vanilla-src"
 NOTION_ENHANCED_SRC_NAME="enhanced-src"
 NOTION_EMBEDDED_NAME="embedded_enhancer"
 
-NOTION_REVISION="${NOTION_REVISION:-1}"
-NOTION_VERSION_REV="${NOTION_VERSION}-${NOTION_REVISION}"
+NOTION_REPACKAGED_REVISION="${NOTION_REVISION:-1}"
+NOTION_VERSION_REV="${NOTION_VERSION}-${NOTION_REPACKAGED_REVISION}"
 NOTION_REPACKAGED_HOMEPAGE="https://github.com/jamezrin/notion-repackaged"
 
 function log() {
@@ -37,7 +37,7 @@ function workspace-dir-pushd() {
 }
 
 function check-debug-expands() {
-  if [ "${NOTION_REPACKAGER_DEBUG}" = true ]; then
+  if [ "${NOTION_REPACKAGED_DEBUG}" = true ]; then
     set -x
   fi
 }
