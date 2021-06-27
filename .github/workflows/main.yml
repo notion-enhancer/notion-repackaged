@@ -91,6 +91,8 @@ jobs:
         run: npm install electron@11 electron-builder --save-dev
       - name: Run electron-builder
         working-directory: vanilla-src
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: node_modules/.bin/electron-builder --linux deb rpm AppImage pacman --config ../electron-builder.yaml
 
   build-enhanced-linux:
@@ -123,6 +125,8 @@ jobs:
         run: npm install electron@11 electron-builder --save-dev
       - name: Run electron-builder
         working-directory: enhanced-src
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: node_modules/.bin/electron-builder --linux -c.asar=false --config ../electron-builder.yaml
 
   build-enhanced-macos:
@@ -153,6 +157,8 @@ jobs:
         run: npm install electron@11 electron-builder --save-dev
       - name: Run electron-builder
         working-directory: enhanced-src
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: node_modules/.bin/electron-builder --macos -c.asar=false --config ../electron-builder.yaml
 
   build-enhanced-windows:
@@ -183,6 +189,8 @@ jobs:
         run: npm install electron@11 electron-builder --save-dev
       - name: Run electron-builder
         working-directory: enhanced-src
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: node_modules/.bin/electron-builder --windows -c.asar=false --config ../electron-builder.yaml
 
   cleanup:
