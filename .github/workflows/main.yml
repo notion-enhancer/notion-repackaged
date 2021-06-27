@@ -98,6 +98,7 @@ jobs:
       - name: Install Linux build dependencies
         if: matrix.os == 'ubuntu-latest'
         run: sudo apt-get install --no-install-recommends -y libopenjp2-tools rpm libarchive-tools
+      
       - name: Install dependencies
         working-directory: ${{ matrix.edition }}-src
         run: npm install
