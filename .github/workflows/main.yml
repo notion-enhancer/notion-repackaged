@@ -4,9 +4,6 @@ on:
   push:
     branches: [main]
 
-  release:
-    types: [created]
-
   workflow_dispatch:
     inputs: {}
 
@@ -94,7 +91,7 @@ jobs:
         working-directory: vanilla-src
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: node_modules/.bin/electron-builder --linux deb rpm AppImage pacman --config ../electron-builder.yaml
+        run: node_modules/.bin/electron-builder --linux --config ../electron-builder.yaml
 
   build-enhanced-linux:
     name: Build enhanced app for Linux

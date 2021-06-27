@@ -24,7 +24,7 @@ linux:
     - x-scheme-handler/notion
   desktop:
     StartupNotify: 'true'
-  synopsis: The all-in-one workspace for your notes and tasks
+  description: The all-in-one workspace for your notes and tasks
   target:
     - AppImage
     - deb
