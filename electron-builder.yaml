@@ -31,3 +31,6 @@ linux:
     - rpm
     - pacman
     - zip
+
+publish:
+  - github
