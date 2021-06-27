@@ -1,5 +1,6 @@
 ---
 appId: com.github.notion-repackaged
+productName: Notion
 
 protocols:
   - name: Notion
