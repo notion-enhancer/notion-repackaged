@@ -113,9 +113,9 @@ jobs:
         run: >-
           node_modules/.bin/electron-builder
           --${{ matrix.target }}
-          --config ../electron-builder.yaml
           -c.asar="${{ matrix.edition == 'vanilla' }}"
           -c.productName="${{ matrix.appName }}"
+          --config ../electron-builder.yaml
 
   cleanup:
     name: Cleanup artifacts
