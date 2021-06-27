@@ -102,7 +102,7 @@ jobs:
         run: npm install
       - name: Run patch-package
         working-directory: ${{ matrix.edition }}-src
-        run: node_modules/.bin/patch-package
+        run: npx patch-package
       - name: Install electron and electron-builder
         working-directory: ${{ matrix.edition }}-src
         run: npm install electron@11 electron-builder --save-dev
@@ -111,9 +111,9 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: >-
-          node_modules/.bin/electron-builder
+          npx electron-builder
           --${{ matrix.target }}
-          -c.asar="${{ matrix.edition == 'vanilla' }}"
+          -c.asar=${{ matrix.edition == 'vanilla' }}
           -c.productName="${{ matrix.appName }}"
           --config ../electron-builder.yaml
 
