@@ -18,6 +18,10 @@ mac:
     - dmg
     - zip
 
+nsis:
+  oneClick: false
+  perMachine: false
+
 linux:
   category: Office;Utility;
   maintainer: jaime@jamezrin.name
