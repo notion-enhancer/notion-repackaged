@@ -47,6 +47,8 @@ jobs:
       - name: Unzip sources with 7z
         working-directory: build
         run: 7z x vanilla-src.zip
+      - name: Install icnsutils
+        run: sudo apt-get install -y icnsutils
       - name: Enhance extracted sources
         run: scripts/enhance-src.sh
       - name: Zip sources dir with 7z
