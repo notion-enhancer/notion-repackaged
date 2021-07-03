@@ -2,11 +2,11 @@
 
 Notion Repackaged is an effort to bring the Notion app to all major Linux distributions as well as providing a variant with [notion-enhancer](https://github.com/notion-enhancer/notion-enhancer) embedded for both Windows, Linux and MacOS.
 
-> This project is heavily inspired on [notion-linux](https://github.com/davidbailey00/notion-linux) but extending on the idea of embedding notion-enhancer, providing an easy way to use notion-enhancer on all operating systems.
+> This project is heavily inspired on [notion-linux](https://github.com/davidbailey00/notion-linux) and [AUR notion-app-enhanced](https://aur.archlinux.org/packages/notion-app-enhanced/) but extending on the idea of embedding notion-enhancer, providing an easy way to use notion-enhancer on all operating systems.
 
 ## Installation
 
-> :warning: Make sure you don't run the official (or vanilla) and enhanced versions at the same time. I would only install one or the other. You can't just have your cake and eat it too.
+> :warning: Make sure you don't run the official (or vanilla) and enhanced versions at the same time. You should only install one or the other. You can't just have your cake and eat it too.
 
 ### Windows
 
@@ -43,9 +43,9 @@ Please, take look at the official instructions from Apple on how to install unsi
 
 ## Issues
 
-If you find yourself not being able to use our builds, please create an issue with a any and all information you can provide on how to reproduce and debug this issue. Screenshots and terminal logs are vital to being able to fix the issues.
+If you find yourself not being able to use our builds, please create an issue with any and all information you can provide on how to reproduce and debug this issue. Screenshots and terminal logs are vital to being able to reproduce and fix the issues.
 
-If you have an issue with the enhanced variant, please try using the vanilla variant. This step is crucial on the way to figuring our the root of the issue. Do not create issues in notion-enhancer before making sure it's not our fault, we modify notion-enhancer internally.
+If you have an issue with the enhanced variant, please try using the vanilla variant. This step is crucial on the way to figuring our the root of the issue. Do not create issues in notion-enhancer before making sure it's not our fault, we modify notion-enhancer's internals heavily.
 
 ## Contributing
 
@@ -56,6 +56,8 @@ We don't plan on improving notion-enhancer, we aim to be compatible with it and 
 
 This project extracts the source code of the publicly-available binaries on the [official Notion website](https://www.notion.so/desktop), meaning all code contained within our packages is owned by Notion.
 
-Additionally, in the enhanced variant, we embed [notion-enhancer](https://github.com/notion-enhancer/notion-enhancer) which is MIT licensed. All code contained in the `embedded_enhancer` directory is owned by them, as well as the code the necessary patches are based off.
+Additionally, in the enhanced variant, we embed [notion-enhancer](https://github.com/notion-enhancer/notion-enhancer) which is MIT licensed. All code contained in the `embedded_enhancer` directory and the icons in the `assets` directory are owned by them.
 
-This project is made as a best-effort in my free time. I am not liable for any problems caused by this (or included) software.
+This project is made as a best-effort, integrating and supporting all Linux distributions as well as other OSes like Mac and Windows is very complicated. 
+
+We are not liable for any problems caused by this (or included) software.
