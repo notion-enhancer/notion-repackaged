@@ -41,14 +41,12 @@ pushd "${NOTION_VANILLA_SRC_NAME}" > /dev/null
 log "Patching source for fixes..."
 sed -i 's|process.platform === "win32"|process.platform !== "darwin"|g' main/main.js
 PATCHED_PACKAGE_JSON=$(jq \
-  --arg version "${NOTION_VERSION_REV}" \
   --arg homepage "${NOTION_REPACKAGED_HOMEPAGE}" \
   --arg repo "${NOTION_REPACKAGED_REPO}" \
   '.dependencies.cld="2.7.0" | 
   .name="notion-app" | 
   .homepage=$homepage | 
-  .repository=$repo |
-  .version=$version' package.json
+  .repository=$repo' package.json
 )
 echo "${PATCHED_PACKAGE_JSON}" > package.json
 
