@@ -7,7 +7,6 @@ workspace-dir-pushd
 
 check-cmd jq
 check-cmd git
-check-cmd convert
 
 if [ -d "${NOTION_ENHANCED_SRC_NAME}" ]; then
   log "Removing already enhanced sources..."
@@ -59,8 +58,6 @@ mv icon.icns vanilla/icon.icns
 mv icon.png vanilla/icon.png
 mv icon.ico vanilla/icon.ico
 
-enhancer_icon_path="mods/core/icons/mac+linux.png"
-convert "${NOTION_EMBEDDED_NAME}/${enhancer_icon_path}" \
-  -resize 512x512 "icon.png"
+cp "${WORKSPACE_DIR}/assets/notion-enhancer-512.png" icon.png
 
 popd > /dev/null
