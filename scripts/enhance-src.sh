@@ -7,6 +7,8 @@ workspace-dir-pushd
 
 check-cmd jq
 check-cmd git
+check-cmd convert
+check-cmd png2icns
 
 if [ -d "${NOTION_ENHANCED_SRC_NAME}" ]; then
   log "Removing already enhanced sources..."
@@ -52,12 +54,29 @@ for patchable_file in $(find . -type d \( -path ./${NOTION_EMBEDDED_NAME} -o -pa
   echo "${rel_loader_require}" >> $patchable_file
 done
 
-log "Swapping the original icon with the enhancer's one..."
+log "Swapping out vanilla icons..."
 mkdir -p vanilla
 mv icon.icns vanilla/icon.icns
 mv icon.png vanilla/icon.png
 mv icon.ico vanilla/icon.ico
 
-cp "${WORKSPACE_DIR}/assets/notion-enhancer-512.png" icon.png
+enhancer_icons="${WORKSPACE_DIR}/assets/enhancer-icons"
+
+cp "${enhancer_icons}/512x512.png" icon.png
+
+log "Converting icon to multi-size ico for Windows"
+# http://www.imagemagick.org/Usage/thumbnails/#favicon
+convert "${enhancer_icons}/512x512.png" -resize 256x256 \
+  -define icon:auto-resize="256,128,96,64,48,32,16" \
+  icon.ico
+
+log "Converting icon to multi-size for Mac and Linux"
+# https://askubuntu.com/questions/223215/how-can-i-convert-a-png-file-to-icns
+png2icns icon.icns \
+  "${enhancer_icons}/512x512.png" \
+  "${enhancer_icons}/256x256.png" \
+  "${enhancer_icons}/128x128.png" \
+  "${enhancer_icons}/32x32.png" \
+  "${enhancer_icons}/16x16.png"
 
 popd > /dev/null

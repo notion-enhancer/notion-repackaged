@@ -21,9 +21,11 @@ npm install
 log "Install electron and electron-builder..."
 npm install electron@11 electron-builder --save-dev
 
+export NOTION_REPACKAGED_EDITION=enhanced
+
 log "Running electron-builder..."
 node_modules/.bin/electron-builder \
   --linux pacman \
-  --config $WORKSPACE_DIR/electron-builder.yaml
+  --config $WORKSPACE_DIR/electron-builder.js
 
 popd > /dev/null
