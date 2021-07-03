@@ -17,7 +17,7 @@ module.exports = {
       },
       {
         target: 'zip',
-        arch: ['x64', 'arm64']
+        arch: ['x64', 'arm64'],
       },
     ],
   },
@@ -32,11 +32,13 @@ module.exports = {
     desktop: {
       StartupNotify: 'true',
     },
+    target: ['AppImage', 'deb', 'rpm', 'pacman', 'zip'],
+  },
+  extraMetadata: {
     description:
       editionEnv === 'vanilla'
         ? 'The all-in-one workspace for your notes and tasks'
         : 'The all-in-one workspace for your notes and tasks, but enhanced',
-    target: ['AppImage', 'deb', 'rpm', 'pacman', 'zip'],
   },
   publish: ['github'],
 };
