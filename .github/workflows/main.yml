@@ -73,10 +73,6 @@ jobs:
             os: ubuntu-latest
           - target: macos
             os: macos-latest
-          - edition: vanilla
-            appName: Notion
-          - edition: enhanced
-            appName: Notion Enhanced
         exclude:
           - target: windows
             edition: vanilla
@@ -110,12 +106,8 @@ jobs:
         working-directory: ${{ matrix.edition }}-src
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: >-
-          npx electron-builder
-          --${{ matrix.target }}
-          -c.asar=${{ matrix.edition == 'vanilla' }}
-          -c.productName="${{ matrix.appName }}"
-          --config ../electron-builder.yaml
+          NOTION_REPACKAGED_EDITION: ${{ matrix.edition }}
+        run: npx electron-builder --${{ matrix.target }} -c ../electron-builder.js
 
   cleanup:
     name: Cleanup artifacts
