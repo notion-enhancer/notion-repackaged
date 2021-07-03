@@ -10,7 +10,16 @@ module.exports = {
   },
   mac: {
     category: 'public.app-category.productivity',
-    target: ['dmg', 'zip'],
+    target: [
+      {
+        target: 'dmg',
+        arch: ['x64', 'arm64'],
+      },
+      {
+        target: 'zip',
+        arch: ['x64', 'arm64']
+      },
+    ],
   },
   nsis: {
     oneClick: false,
