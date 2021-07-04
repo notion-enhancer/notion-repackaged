@@ -1,3 +1,4 @@
+set -a
 
 WORKSPACE_DIR=`realpath $(dirname $0)/..`
 
@@ -16,9 +17,12 @@ NOTION_ENHANCED_SRC_NAME="enhanced-src"
 NOTION_EMBEDDED_NAME="embedded_enhancer"
 
 NOTION_REPACKAGED_REVISION="${NOTION_REPACKAGED_REVISION:-1}"
+NOTION_REPACKAGED_VERSION_REV="${NOTION_VERSION}-${NOTION_REPACKAGED_REVISION}"
 NOTION_REPACKAGED_HOMEPAGE="https://github.com/jamezrin/notion-repackaged"
 NOTION_REPACKAGED_REPO=${NOTION_REPACKAGED_REPO:-${NOTION_REPACKAGED_HOMEPAGE}}
 NOTION_REPACKAGED_AUTHOR="Notion Repackaged"
+
+set +a
 
 function log() {
   caller=`basename "$0"`

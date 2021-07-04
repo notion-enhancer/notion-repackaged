@@ -44,11 +44,13 @@ PATCHED_PACKAGE_JSON=$(jq \
   --arg homepage "${NOTION_REPACKAGED_HOMEPAGE}" \
   --arg repo "${NOTION_REPACKAGED_REPO}" \
   --arg author "${NOTION_REPACKAGED_AUTHOR}" \
+  --arg version "${NOTION_REPACKAGED_VERSION_REV}" \
   '.dependencies.cld="2.7.0" | 
   .name="notion-app" | 
   .homepage=$homepage | 
   .repository=$repo | 
-  .author=$author' package.json
+  .author=$author | 
+  .version=$version' package.json
 )
 echo "${PATCHED_PACKAGE_JSON}" > package.json
 
