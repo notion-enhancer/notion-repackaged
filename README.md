@@ -8,6 +8,9 @@ Notion Repackaged is an effort to bring the Notion app to all major Linux distri
 
 > :warning: Make sure you don't run the official (or vanilla) and enhanced versions at the same time. You should only install one or the other. You can't just have your cake and eat it too.
 
+Downloads are available at the repository releases section. 
+You can go directly to [the latest release](https://github.com/notion-enhancer/notion-repackaged/releases/latest) and download the build for the platform you are using.
+
 ### Windows
 
 Download the `exe` file from the release and install it, should be a pretty straightforward experience.
