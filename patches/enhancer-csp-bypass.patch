@@ -1,0 +1,10 @@
+--- pkg/loader.js	2021-08-15 22:42:27.706648462 +0200
++++ pkg/loader.new.js	2021-08-15 22:42:44.389331997 +0200
+@@ -42,6 +42,7 @@
+           allowServiceWorkers: true,
+           supportFetchAPI: true,
+           corsEnabled: true,
++          bypassCSP: true,
+         },
+       },
+       {

@@ -40,6 +40,8 @@ log "Applying enhancer patches..."
 patch -p0 --binary < "${WORKSPACE_DIR}/patches/enhancer-query-selector-fix.patch"
 patch -p0 --binary < "${WORKSPACE_DIR}/patches/enhancer-urlhelper-fix.patch"
 patch -p0 --binary < "${WORKSPACE_DIR}/patches/enhancer-paths.patch"
+patch -p0 --binary < "${WORKSPACE_DIR}/patches/enhancer-titlebar-icons-fix.patch"
+patch -p0 --binary < "${WORKSPACE_DIR}/patches/enhancer-csp-bypass.patch"
 popd > /dev/null
 
 log "Injecting enhancer loader..."
