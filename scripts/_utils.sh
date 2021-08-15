@@ -1,28 +1,4 @@
-set -a
-
-WORKSPACE_DIR=`realpath $(dirname $0)/..`
-
-NOTION_VERSION="${NOTION_VERSION:-2.0.16}"
-NOTION_DOWNLOAD_HASH="${NOTION_DOWNLOAD_HASH:-9f72284086cda3977f7f569dff3974d5}"
-NOTION_DOWNLOAD_URL="https://desktop-release.notion-static.com/Notion%20Setup%20${NOTION_VERSION}.exe"
-NOTION_DOWNLOADED_NAME="Notion-${NOTION_VERSION}.exe"
-
-NOTION_ENHANCER_COMMIT="${NOTION_ENHANCER_COMMIT:-b248ffa3bac393f267a4600d4e951aba8565f31e}"
-NOTION_ENHANCER_REPO_URL="https://github.com/notion-enhancer/notion-enhancer"
-
-NOTION_EXTRACTED_EXE_NAME="extracted-exe"
-NOTION_EXTRACTED_APP_NAME="extracted-app"
-NOTION_VANILLA_SRC_NAME="vanilla-src"
-NOTION_ENHANCED_SRC_NAME="enhanced-src"
-NOTION_EMBEDDED_NAME="embedded_enhancer"
-
-NOTION_REPACKAGED_REVISION="${NOTION_REPACKAGED_REVISION:-1}"
-NOTION_REPACKAGED_VERSION_REV="${NOTION_VERSION}-${NOTION_REPACKAGED_REVISION}"
-NOTION_REPACKAGED_HOMEPAGE="https://github.com/jamezrin/notion-repackaged"
-NOTION_REPACKAGED_REPO=${NOTION_REPACKAGED_REPO:-${NOTION_REPACKAGED_HOMEPAGE}}
-NOTION_REPACKAGED_AUTHOR="Notion Repackaged"
-
-set +a
+export WORKSPACE_DIR=`realpath $(dirname $0)/..`
 
 function log() {
   caller=`basename "$0"`
@@ -36,6 +12,15 @@ function check-cmd() {
   fi
 }
 
+function check-env() {
+  for var_name in "$@"; do
+    if [ -z "${!var_name}" ]; then
+      log "Required environment variable $var_name is not set"
+      exit -1
+    fi
+  done
+}
+
 function workspace-dir-pushd() {
   mkdir -p "${WORKSPACE_DIR}/build"
   pushd "${WORKSPACE_DIR}/build" > /dev/null
@@ -46,3 +31,21 @@ function check-debug-expands() {
     set -x
   fi
 }
+
+check-env NOTION_VERSION NOTION_REPACKAGED_REVISION NOTION_DOWNLOAD_HASH NOTION_ENHANCER_COMMIT
+
+export NOTION_DOWNLOAD_URL="https://desktop-release.notion-static.com/Notion%20Setup%20${NOTION_VERSION}.exe"
+export NOTION_DOWNLOADED_NAME="Notion-${NOTION_VERSION}.exe"
+
+
+export NOTION_ENHANCER_REPO_URL="https://github.com/notion-enhancer/notion-enhancer"
+export NOTION_EXTRACTED_EXE_NAME="extracted-exe"
+export NOTION_EXTRACTED_APP_NAME="extracted-app"
+export NOTION_VANILLA_SRC_NAME="vanilla-src"
+export NOTION_ENHANCED_SRC_NAME="enhanced-src"
+export NOTION_EMBEDDED_NAME="embedded_enhancer"
+
+export NOTION_REPACKAGED_VERSION_REV="${NOTION_VERSION}-${NOTION_REPACKAGED_REVISION}"
+export NOTION_REPACKAGED_HOMEPAGE="https://github.com/jamezrin/notion-repackaged"
+export NOTION_REPACKAGED_REPO=${NOTION_REPACKAGED_REPO:-${NOTION_REPACKAGED_HOMEPAGE}}
+export NOTION_REPACKAGED_AUTHOR="Notion Repackaged"

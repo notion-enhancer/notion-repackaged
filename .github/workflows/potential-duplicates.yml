@@ -1,0 +1,23 @@
+name: Potential Duplicates
+
+on:
+  issues:
+    types: [opened, edited]
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: bubkoo/potential-duplicates@v1
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          filter: ''
+          exclude: ''
+          label: potential-duplicate
+          state: all
+          threshold: 0.6
+          reactions: 'eyes, confused'
+          comment: >
+            Potential duplicates: {{#issues}}
+              - [#{{ number }}] {{ title }} ({{ accuracy }}%)
+            {{/issues}}

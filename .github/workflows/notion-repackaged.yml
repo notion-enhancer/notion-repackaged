@@ -1,25 +1,36 @@
-name: Notion Repackage
+name: Notion Repackaged Main
 
 on:
   push:
     branches: [main]
+    paths:
+      - 'notion-repackaged.env'
 
   workflow_dispatch:
     inputs: {}
 
 env:
-  NOTION_VERSION: 2.0.16
-  NOTION_DOWNLOAD_HASH: 9f72284086cda3977f7f569dff3974d5
-  NOTION_ENHANCER_COMMIT: b248ffa3bac393f267a4600d4e951aba8565f31e
-  NOTION_REPACKAGED_REVISION: 1
   NOTION_REPACKAGED_DEBUG: true
 
 jobs:
+  create-release:
+    name: Create release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: grep -v '^#' notion-repackaged.env >> $GITHUB_ENV
+      - uses: release-drafter/release-drafter@v5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          version: "${{ env.NOTION_VERSION }}-${{ env.NOTION_REPACKAGED_REVISION }}"
+
   make-vanilla-sources:
     name: Make vanilla sources
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - run: grep -v '^#' notion-repackaged.env >> $GITHUB_ENV
       - name: Download official Windows build
         run: scripts/download-exe.sh
       - name: Extract sources from Windows Build
@@ -39,6 +50,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - run: grep -v '^#' notion-repackaged.env >> $GITHUB_ENV
       - name: Retrieve saved vanilla sources
         uses: actions/download-artifact@v2
         with:
@@ -62,7 +74,7 @@ jobs:
 
   build-app:
     name: Build app
-    needs: [make-vanilla-sources, make-enhanced-sources]
+    needs: [make-vanilla-sources, make-enhanced-sources, create-release]
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -82,6 +94,7 @@ jobs:
             edition: vanilla
     steps:
       - uses: actions/checkout@v2
+      - run: grep -v '^#' notion-repackaged.env >> $GITHUB_ENV
       - uses: actions/setup-node@v1
         with:
           node-version: 14
