@@ -25,7 +25,6 @@ export NOTION_REPACKAGED_EDITION=enhanced
 
 log "Running electron-builder..."
 node_modules/.bin/electron-builder \
-  --linux pacman \
-  --config $WORKSPACE_DIR/electron-builder.js
+  --config $WORKSPACE_DIR/electron-builder.js $@
 
 popd > /dev/null
