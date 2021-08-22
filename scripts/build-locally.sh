@@ -5,8 +5,8 @@ source `dirname $0`/_utils.sh
 check-debug-expands
 workspace-dir-pushd
 
-check-cmd jq
-check-cmd git
+check-cmd jq git
+check-env NOTION_VERSION NOTION_REPACKAGED_REVISION
 
 if [ -z "${NOTION_REPACKAGED_EDITION}" ]; then
   log "Cannot build without knowing the edition to build, please set NOTION_REPACKAGED_EDITION env var"

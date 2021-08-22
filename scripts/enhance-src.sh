@@ -5,10 +5,8 @@ source `dirname $0`/_utils.sh
 check-debug-expands
 workspace-dir-pushd
 
-check-cmd jq
-check-cmd git
-check-cmd convert
-check-cmd png2icns
+check-cmd jq git convert png2icns
+check-env NOTION_ENHANCER_COMMIT
 
 if [ -d "${NOTION_ENHANCED_SRC_NAME}" ]; then
   log "Removing already enhanced sources..."
@@ -30,6 +28,7 @@ patch -p0 --binary < "${WORKSPACE_DIR}/patches/notion-check-relativeurl.patch"
 
 log "Fetching enhancer sources..."
 
+export NOTION_ENHANCER_REPO_URL="https://github.com/notion-enhancer/notion-enhancer"
 git clone "${NOTION_ENHANCER_REPO_URL}" "${NOTION_EMBEDDED_NAME}"
 
 pushd "${NOTION_EMBEDDED_NAME}" > /dev/null

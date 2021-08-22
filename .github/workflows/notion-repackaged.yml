@@ -14,25 +14,54 @@ env:
   NOTION_REPACKAGED_DEBUG: true
 
 jobs:
-  create-release:
-    name: Create release
+  preload-variables:
+    name: Preload variables
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run: grep -v '^#' notion-repackaged.env >> $GITHUB_ENV
+      - id: preload-variables
+        name: Load variables and set them as outputs
+        run: |
+          source notion-repackaged.env
+
+          echo "::set-output name=notion_version::$NOTION_VERSION"
+          echo "::set-output name=notion_repackaged_revision::$NOTION_REPACKAGED_REVISION"
+          echo "::set-output name=notion_download_hash::$NOTION_DOWNLOAD_HASH"
+          echo "::set-output name=notion_enhancer_commit::$NOTION_ENHANCER_COMMIT"
+
+          NOTION_REPACKAGED_VERSION_REV="${NOTION_VERSION}-${NOTION_REPACKAGED_REVISION}"
+          echo "::set-output name=notion_repackaged_version_rev::$NOTION_REPACKAGED_VERSION_REV"
+    outputs:
+      notion_version: ${{ steps.preload-variables.outputs.notion_version }}
+      notion_repackaged_revision: ${{ steps.preload-variables.outputs.notion_repackaged_revision }}
+      notion_repackaged_version_rev: ${{ steps.preload-variables.outputs.notion_repackaged_version_rev }}
+      notion_download_hash: ${{ steps.preload-variables.outputs.notion_download_hash }}
+      notion_enhancer_commit: ${{ steps.preload-variables.outputs.notion_enhancer_commit }}
+
+  create-release:
+    name: Create release
+    runs-on: ubuntu-latest
+    needs: [preload-variables]
+    steps:
+      - uses: actions/checkout@v2
       - uses: release-drafter/release-drafter@v5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          version: "${{ env.NOTION_VERSION }}-${{ env.NOTION_REPACKAGED_REVISION }}"
+          version: ${{ needs.preload-variables.outputs.notion_repackaged_version_rev }}
 
   make-vanilla-sources:
     name: Make vanilla sources
     runs-on: ubuntu-latest
+    needs: [preload-variables]
+    env:
+      NOTION_VERSION: ${{ needs.preload-variables.outputs.notion_version }}
+      NOTION_REPACKAGED_REVISION: ${{ needs.preload-variables.outputs.notion_repackaged_revision }}
     steps:
       - uses: actions/checkout@v2
-      - run: grep -v '^#' notion-repackaged.env >> $GITHUB_ENV
       - name: Download official Windows build
+        env:
+          NOTION_DOWNLOAD_HASH: ${{ needs.preload-variables.outputs.notion_download_hash }}
         run: scripts/download-exe.sh
       - name: Extract sources from Windows Build
         run: scripts/extract-src.sh
@@ -47,11 +76,10 @@ jobs:
 
   make-enhanced-sources:
     name: Make enhanced sources
-    needs: [make-vanilla-sources]
+    needs: [make-vanilla-sources, preload-variables]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run: grep -v '^#' notion-repackaged.env >> $GITHUB_ENV
       - name: Retrieve saved vanilla sources
         uses: actions/download-artifact@v2
         with:
@@ -63,6 +91,8 @@ jobs:
       - name: Install icnsutils
         run: sudo apt-get install -y icnsutils
       - name: Enhance extracted sources
+        env:
+          NOTION_ENHANCER_COMMIT: ${{ needs.preload-variables.outputs.notion_enhancer_commit }}
         run: scripts/enhance-src.sh
       - name: Zip sources dir with 7z
         working-directory: build
@@ -75,8 +105,11 @@ jobs:
 
   build-app:
     name: Build app
-    needs: [make-vanilla-sources, make-enhanced-sources, create-release]
+    needs: [make-vanilla-sources, make-enhanced-sources, preload-variables]
     runs-on: ${{ matrix.os }}
+    env:
+      NOTION_VERSION: ${{ needs.preload-variables.outputs.notion_version }}
+      NOTION_REPACKAGED_REVISION: ${{ needs.preload-variables.outputs.notion_repackaged_revision }}
     strategy:
       matrix:
         target: [windows, linux, macos]
@@ -95,7 +128,6 @@ jobs:
             edition: vanilla
     steps:
       - uses: actions/checkout@v2
-      - run: grep -v '^#' notion-repackaged.env >> $GITHUB_ENV
       - uses: actions/setup-node@v1
         with:
           node-version: 14
@@ -123,8 +155,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NOTION_REPACKAGED_EDITION: ${{ matrix.edition }}
-          NOTION_VERSION: ${{ env.NOTION_VERSION }}
-          NOTION_REPACKAGED_REVISION: ${{ env.NOTION_REPACKAGED_REVISION }}
         run: npx electron-builder --${{ matrix.target }} -c ../electron-builder.js
 
   cleanup:
