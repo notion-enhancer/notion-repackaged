@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'notion-repackaged.env'
+      - '.github/workflows/notion-repackaged.yml'
 
   workflow_dispatch:
     inputs: {}
