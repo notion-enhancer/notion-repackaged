@@ -2,3 +2,5 @@ patches/enhancer-query-selector-fix.patch text eol=lf
 patches/enhancer-urlhelper-fix.patch text eol=lf
 patches/notion-check-relativeurl.patch text eol=crlf
 patches/enhancer-paths.patch text eol=tf
+patches/enhancer-csp-bypass.patch eol=tf
+patches/enhancer-titlebar-icons-fix.patch eol=tf
