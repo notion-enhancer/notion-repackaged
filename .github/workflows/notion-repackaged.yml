@@ -122,6 +122,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NOTION_REPACKAGED_EDITION: ${{ matrix.edition }}
+          NOTION_VERSION: ${{ env.NOTION_VERSION }}
+          NOTION_REPACKAGED_REVISION: ${{ env.NOTION_REPACKAGED_REVISION }}
         run: npx electron-builder --${{ matrix.target }} -c ../electron-builder.js
 
   cleanup:
