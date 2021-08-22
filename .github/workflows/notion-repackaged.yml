@@ -105,7 +105,7 @@ jobs:
 
   build-app:
     name: Build app
-    needs: [make-vanilla-sources, make-enhanced-sources, preload-variables]
+    needs: [make-vanilla-sources, make-enhanced-sources, preload-variables, create-release]
     runs-on: ${{ matrix.os }}
     env:
       NOTION_VERSION: ${{ needs.preload-variables.outputs.notion_version }}
