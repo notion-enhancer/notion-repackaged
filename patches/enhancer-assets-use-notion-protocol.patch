@@ -1,0 +1,105 @@
+diff -ur a/mods/core/enhancerMenu.js b/mods/core/enhancerMenu.js
+--- a/mods/core/enhancerMenu.js	2021-08-28 14:28:05.482859666 +0200
++++ b/mods/core/enhancerMenu.js	2021-08-28 14:51:42.253297153 +0200
+@@ -520,7 +520,7 @@
+         if (fileExists(`${__dirname}/../${mod.dir}/${sheet}.css`)) {
+           document.head.appendChild(
+             createElement(
+-              `<link rel="stylesheet" href="enhancement://${mod.dir}/${sheet}.css">`
++              `<link rel="stylesheet" href="notion://www.notion.so/__notion-enhancer/${mod.dir}/${sheet}.css">`
+             )
+           );
+         }
+diff -ur a/mods/core/render.js b/mods/core/render.js
+--- a/mods/core/render.js	2021-08-28 14:28:05.542859999 +0200
++++ b/mods/core/render.js	2021-08-28 14:53:19.997206456 +0200
+@@ -963,7 +963,7 @@
+             if (fileExists(`${__dirname}/../${mod.dir}/${sheet}.css`)) {
+               document.head.appendChild(
+                 createElement(
+-                  `<link rel="stylesheet" href="enhancement://${mod.dir}/${sheet}.css">`
++                  `<link rel="stylesheet" href="notion://www.notion.so/__notion-enhancer/${mod.dir}/${sheet}.css">`
+                 )
+               );
+             }
+diff -ur a/mods/core/tabs.css b/mods/core/tabs.css
+--- a/mods/core/tabs.css	2021-08-28 14:28:05.489526369 +0200
++++ b/mods/core/tabs.css	2021-08-28 14:51:51.676689282 +0200
+@@ -99,7 +99,7 @@
+   display: inline-block;
+   margin: auto 1em -0.25em 1em;
+   background-size: contain;
+-  background-image: url('enhancement://core/icons/mac+linux.png');
++  background-image: url('notion://www.notion.so/__notion-enhancer/core/icons/mac+linux.png');
+   background-repeat: no-repeat;
+ }
+ #tabs {
+diff -ur a/mods/core/tray.js b/mods/core/tray.js
+--- a/mods/core/tray.js	2021-08-28 14:28:05.489526369 +0200
++++ b/mods/core/tray.js	2021-08-28 14:53:37.810637211 +0200
+@@ -144,7 +144,7 @@
+           enableRemoteModule: true,
+         },
+       });
+-      enhancer_menu.loadURL('enhancement://core/menu.html');
++      enhancer_menu.loadURL('notion://www.notion.so/__notion-enhancer/core/menu.html');
+       enhancer_menu.on('close', (e) => {
+         window_state.saveState(enhancer_menu);
+         enhancer_menu = null;
+diff -ur a/pkg/loader.js b/pkg/loader.js
+--- a/pkg/loader.js	2021-08-28 14:28:05.502859777 +0200
++++ b/pkg/loader.js	2021-08-28 14:52:57.387079612 +0200
+@@ -20,44 +20,6 @@
+     .slice(path.resolve(`${getNotionResources()}/app`).length + 1)
+     .replace(/\\/g, '/');
+ 
+-  if (__file === 'main/security.js') {
+-    const electron = require('electron');
+-    electron.app.whenReady().then(() => {
+-      electron.session
+-        .fromPartition('persist:notion')
+-        .protocol.registerFileProtocol('enhancement', (req, callback) => {
+-          callback({
+-            path: path.resolve(
+-              `${__dirname}/../mods/${req.url.slice('enhancement://'.length)}`
+-            ),
+-          });
+-        });
+-    });
+-    electron.protocol.registerSchemesAsPrivileged([
+-      {
+-        scheme: 'notion',
+-        privileges: {
+-          standard: true,
+-          secure: true,
+-          allowServiceWorkers: true,
+-          supportFetchAPI: true,
+-          corsEnabled: true,
+-        },
+-      },
+-      {
+-        scheme: 'enhancement',
+-        privileges: {
+-          standard: true,
+-          secure: true,
+-          allowServiceWorkers: true,
+-          supportFetchAPI: true,
+-          corsEnabled: true,
+-          bypassCSP: true,
+-        },
+-      },
+-    ]);
+-  }
+-
+   let modules = getEnhancements();
+   modules = [
+     ...modules.loaded.filter((m) => m.tags.includes('core')),
+@@ -76,7 +38,7 @@
+             if (fileExists(`${__dirname}/../mods/${mod.dir}/${sheet}.css`)) {
+               document.head.appendChild(
+                 createElement(
+-                  `<link rel="stylesheet" href="enhancement://${mod.dir}/${sheet}.css">`
++                  `<link rel="stylesheet" href="notion://www.notion.so/__notion-enhancer/${mod.dir}/${sheet}.css">`
+                 )
+               );
+             }

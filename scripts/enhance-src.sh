@@ -25,6 +25,7 @@ echo "${PATCHED_PACKAGE_JSON}" > package.json
 
 log "Applying additional notion patches..."
 patch -p0 --binary < "${WORKSPACE_DIR}/patches/notion-check-relativeurl.patch"
+patch -p0 --binary < "${WORKSPACE_DIR}/patches/notion-protocol-handle-enhancer.patch"
 
 log "Fetching enhancer sources..."
 
@@ -40,6 +41,7 @@ patch -p0 --binary < "${WORKSPACE_DIR}/patches/enhancer-query-selector-fix.patch
 patch -p0 --binary < "${WORKSPACE_DIR}/patches/enhancer-urlhelper-fix.patch"
 patch -p0 --binary < "${WORKSPACE_DIR}/patches/enhancer-paths.patch"
 patch -p0 --binary < "${WORKSPACE_DIR}/patches/enhancer-titlebar-icons-fix.patch"
+patch -p0 --binary < "${WORKSPACE_DIR}/patches/enhancer-assets-use-notion-protocol.patch"
 popd > /dev/null
 
 log "Injecting enhancer loader..."
