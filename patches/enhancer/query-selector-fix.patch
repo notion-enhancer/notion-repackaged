@@ -1,5 +1,5 @@
 --- mods/core/client.js	2021-04-28 23:47:55.867684760 +0200
-+++ mods/core/client.js.new	2021-04-28 23:58:26.305652911 +0200
++++ mods/core/client.js	2021-04-28 23:58:26.305652911 +0200
 @@ -105,7 +105,7 @@
      if (
        !document.querySelector('.notion-frame') ||

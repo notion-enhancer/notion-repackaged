@@ -1,6 +1,5 @@
-diff -ur a/mods/core/enhancerMenu.js b/mods/core/enhancerMenu.js
---- a/mods/core/enhancerMenu.js	2021-08-28 14:28:05.482859666 +0200
-+++ b/mods/core/enhancerMenu.js	2021-08-28 14:51:42.253297153 +0200
+--- mods/core/enhancerMenu.js	2021-08-28 14:28:05.482859666 +0200
++++ mods/core/enhancerMenu.js	2021-08-28 14:51:42.253297153 +0200
 @@ -520,7 +520,7 @@
          if (fileExists(`${__dirname}/../${mod.dir}/${sheet}.css`)) {
            document.head.appendChild(
@@ -10,9 +9,8 @@ diff -ur a/mods/core/enhancerMenu.js b/mods/core/enhancerMenu.js
              )
            );
          }
-diff -ur a/mods/core/render.js b/mods/core/render.js
---- a/mods/core/render.js	2021-08-28 14:28:05.542859999 +0200
-+++ b/mods/core/render.js	2021-08-28 14:53:19.997206456 +0200
+--- mods/core/render.js	2021-08-28 14:28:05.542859999 +0200
++++ mods/core/render.js	2021-08-28 14:53:19.997206456 +0200
 @@ -963,7 +963,7 @@
              if (fileExists(`${__dirname}/../${mod.dir}/${sheet}.css`)) {
                document.head.appendChild(
@@ -22,9 +20,8 @@ diff -ur a/mods/core/render.js b/mods/core/render.js
                  )
                );
              }
-diff -ur a/mods/core/tabs.css b/mods/core/tabs.css
---- a/mods/core/tabs.css	2021-08-28 14:28:05.489526369 +0200
-+++ b/mods/core/tabs.css	2021-08-28 14:51:51.676689282 +0200
+--- mods/core/tabs.css	2021-08-28 14:28:05.489526369 +0200
++++ mods/core/tabs.css	2021-08-28 14:51:51.676689282 +0200
 @@ -99,7 +99,7 @@
    display: inline-block;
    margin: auto 1em -0.25em 1em;
@@ -34,9 +31,8 @@ diff -ur a/mods/core/tabs.css b/mods/core/tabs.css
    background-repeat: no-repeat;
  }
  #tabs {
-diff -ur a/mods/core/tray.js b/mods/core/tray.js
---- a/mods/core/tray.js	2021-08-28 14:28:05.489526369 +0200
-+++ b/mods/core/tray.js	2021-08-28 14:53:37.810637211 +0200
+--- mods/core/tray.js	2021-08-28 14:28:05.489526369 +0200
++++ mods/core/tray.js	2021-08-28 14:53:37.810637211 +0200
 @@ -144,7 +144,7 @@
            enableRemoteModule: true,
          },
@@ -46,9 +42,8 @@ diff -ur a/mods/core/tray.js b/mods/core/tray.js
        enhancer_menu.on('close', (e) => {
          window_state.saveState(enhancer_menu);
          enhancer_menu = null;
-diff -ur a/pkg/loader.js b/pkg/loader.js
---- a/pkg/loader.js	2021-08-28 14:28:05.502859777 +0200
-+++ b/pkg/loader.js	2021-08-28 14:52:57.387079612 +0200
+--- pkg/loader.js	2021-08-28 14:28:05.502859777 +0200
++++ pkg/loader.js	2021-08-28 14:52:57.387079612 +0200
 @@ -20,44 +20,6 @@
      .slice(path.resolve(`${getNotionResources()}/app`).length + 1)
      .replace(/\\/g, '/');

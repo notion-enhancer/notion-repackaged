@@ -1,10 +1,10 @@
-name: Notion Repackaged Main
+name: repackage-notion-app
 
 on:
   push:
     branches: [main]
     paths:
-      - 'notion-repackaged.sh'
+      - 'env.sh'
       - '.github/workflows/notion-repackaged.yml'
 
   workflow_dispatch:
@@ -15,31 +15,26 @@ env:
 
 jobs:
   preload-variables:
-    name: Preload variables
+    name: preload variables
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - id: preload-variables
         name: Load variables and set them as outputs
         run: |
-          source notion-repackaged.sh
+          source env.sh
 
           echo "::set-output name=notion_version::$NOTION_VERSION"
           echo "::set-output name=notion_repackaged_revision::$NOTION_REPACKAGED_REVISION"
-          echo "::set-output name=notion_download_hash::$NOTION_DOWNLOAD_HASH"
-          echo "::set-output name=notion_enhancer_commit::$NOTION_ENHANCER_COMMIT"
 
-          NOTION_REPACKAGED_VERSION_REV="${NOTION_VERSION}-${NOTION_REPACKAGED_REVISION}"
           echo "::set-output name=notion_repackaged_version_rev::$NOTION_REPACKAGED_VERSION_REV"
     outputs:
       notion_version: ${{ steps.preload-variables.outputs.notion_version }}
       notion_repackaged_revision: ${{ steps.preload-variables.outputs.notion_repackaged_revision }}
       notion_repackaged_version_rev: ${{ steps.preload-variables.outputs.notion_repackaged_version_rev }}
-      notion_download_hash: ${{ steps.preload-variables.outputs.notion_download_hash }}
-      notion_enhancer_commit: ${{ steps.preload-variables.outputs.notion_enhancer_commit }}
 
   create-release:
-    name: Create release
+    name: create release
     runs-on: ubuntu-latest
     needs: [preload-variables]
     steps:
@@ -50,62 +45,36 @@ jobs:
         with:
           version: ${{ needs.preload-variables.outputs.notion_repackaged_version_rev }}
 
-  make-vanilla-sources:
-    name: Make vanilla sources
+  generate-sources:
+    name: extract and patch vanilla and enhanced sources
     runs-on: ubuntu-latest
-    needs: [preload-variables]
-    env:
-      NOTION_VERSION: ${{ needs.preload-variables.outputs.notion_version }}
-      NOTION_REPACKAGED_REVISION: ${{ needs.preload-variables.outputs.notion_repackaged_revision }}
+    needs: [preload-variables, create-release]
     steps:
       - uses: actions/checkout@v2
-      - name: Download official Windows build
-        env:
-          NOTION_DOWNLOAD_HASH: ${{ needs.preload-variables.outputs.notion_download_hash }}
-        run: scripts/download-exe.sh
-      - name: Extract sources from Windows Build
-        run: scripts/extract-src.sh
-      - name: Zip sources dir with 7z
+      - name: install build dependencies
+        run: sudo apt install --no-install-recommends -y curl p7zip-full coreutils jq git imagemagick icnsutils
+      - name: run build script
+        run: ./build.sh --reset
+      - name: zip vanilla source dir with 7z
         working-directory: build
         run: 7z a vanilla-src.zip vanilla-src
-      - name: Save vanilla sources as artifact
+      - name: save vanilla source as artifact
         uses: actions/upload-artifact@v2
         with:
           name: vanilla-sources
           path: build/vanilla-src.zip
-
-  make-enhanced-sources:
-    name: Make enhanced sources
-    needs: [make-vanilla-sources, preload-variables]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Retrieve saved vanilla sources
-        uses: actions/download-artifact@v2
-        with:
-          name: vanilla-sources
-          path: build/vanilla-src.zip
-      - name: Unzip sources with 7z
-        working-directory: build
-        run: 7z x vanilla-src.zip
-      - name: Install icnsutils
-        run: sudo apt-get install -y icnsutils
-      - name: Enhance extracted sources
-        env:
-          NOTION_ENHANCER_COMMIT: ${{ needs.preload-variables.outputs.notion_enhancer_commit }}
-        run: scripts/enhance-src.sh
-      - name: Zip sources dir with 7z
+      - name: zip enhanced source dir with 7z
         working-directory: build
         run: 7z a enhanced-src.zip enhanced-src
-      - name: Save enhanced sources as artifact
+      - name: save enhanced source as artifact
         uses: actions/upload-artifact@v2
         with:
           name: enhanced-sources
           path: build/enhanced-src.zip
 
   build-app:
-    name: Build app
-    needs: [make-vanilla-sources, make-enhanced-sources, preload-variables, create-release]
+    name: build app
+    needs: [generate-sources, preload-variables, create-release]
     runs-on: ${{ matrix.os }}
     env:
       NOTION_VERSION: ${{ needs.preload-variables.outputs.notion_version }}
@@ -131,26 +100,26 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: 14
-      - name: Retrieve saved sources
+      - name: retrieve saved sources
         uses: actions/download-artifact@v2
         with:
           name: ${{ matrix.edition }}-sources
-          path: sources.zip
-      - name: Unzip sources with 7z
-        run: 7z x sources.zip
+          path: build/${{ matrix.edition }}-src.zip
+      - name: unzip sources with 7z
+        run: 7z x build/${{ matrix.edition }}-src.zip
       - name: Install Linux build dependencies
         if: matrix.os == 'ubuntu-latest'
         run: sudo apt-get install --no-install-recommends -y libopenjp2-tools rpm libarchive-tools
-      - name: Install dependencies
+      - name: install dependencies
         working-directory: ${{ matrix.edition }}-src
         run: npm install
-      - name: Run patch-package
+      - name: run patch-package
         working-directory: ${{ matrix.edition }}-src
         run: npx patch-package
-      - name: Install electron and electron-builder
+      - name: install electron and electron-builder
         working-directory: ${{ matrix.edition }}-src
         run: npm install electron@11 electron-builder --save-dev
-      - name: Run electron-builder
+      - name: run electron-builder
         working-directory: ${{ matrix.edition }}-src
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -158,7 +127,7 @@ jobs:
         run: npx electron-builder --${{ matrix.target }} -c ../electron-builder.js
 
   cleanup:
-    name: Cleanup artifacts
+    name: cleanup artifacts
     if: always()
     needs: [build-app]
     strategy:

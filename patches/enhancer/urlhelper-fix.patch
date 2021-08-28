@@ -1,5 +1,5 @@
 --- mods/core/createWindow.js	2021-04-28 23:47:55.867684760 +0200
-+++ mods/core/createWindow.js.new	2021-04-28 23:59:51.891726201 +0200
++++ mods/core/createWindow.js	2021-04-28 23:59:51.891726201 +0200
 @@ -16,6 +16,10 @@
      // createWindow = __exports.createWindow,
      path = require('path'),

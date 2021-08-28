@@ -1,5 +1,5 @@
 --- mods/core/render.js	2021-08-15 22:49:21.087926244 +0200
-+++ mods/core/render.new.js	2021-08-15 22:49:54.986617806 +0200
++++ mods/core/render.js	2021-08-15 22:49:54.986617806 +0200
 @@ -708,7 +708,7 @@
                    },
                    React.createElement('span', {
