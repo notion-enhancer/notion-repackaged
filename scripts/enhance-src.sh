@@ -40,13 +40,12 @@ patch -p0 --binary < "${WORKSPACE_DIR}/patches/enhancer-query-selector-fix.patch
 patch -p0 --binary < "${WORKSPACE_DIR}/patches/enhancer-urlhelper-fix.patch"
 patch -p0 --binary < "${WORKSPACE_DIR}/patches/enhancer-paths.patch"
 patch -p0 --binary < "${WORKSPACE_DIR}/patches/enhancer-titlebar-icons-fix.patch"
-patch -p0 --binary < "${WORKSPACE_DIR}/patches/enhancer-csp-bypass.patch"
 popd > /dev/null
 
 log "Injecting enhancer loader..."
 for patchable_file in $(find . -type d \( -path ./${NOTION_EMBEDDED_NAME} -o -path ./node_modules \) -prune -false -o -name '*.js'); do
   patchable_file_dir=$(dirname $patchable_file)
-  rel_loader_path=$(realpath ${NOTION_EMBEDDED_NAME}/pkg/loader.js --relative-to $patchable_file_dir) 
+  rel_loader_path=$(realpath ${NOTION_EMBEDDED_NAME}/pkg/loader.js --relative-to $patchable_file_dir)
   [ $patchable_file_dir = '.' ] && rel_loader_path="./"$rel_loader_path
   rel_loader_require="require('${rel_loader_path}')(__filename, exports);"
 
