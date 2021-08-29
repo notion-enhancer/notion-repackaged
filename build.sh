@@ -127,18 +127,11 @@ if $enhance_build; then
     .name="notion-app-enhanced"' "${NOTION_ENHANCED_SRC_DIRNAME}/package.json")
   echo "${PATCHED_PACKAGE_JSON}" > "${NOTION_ENHANCED_SRC_DIRNAME}/package.json"
 
-  log "enhance" "downloading enhancer src..."
-
-  git clone "${NOTION_ENHANCER_REPO_URL}" "${NOTION_EMBEDDED_DIRNAME}"
-
-  pushd "${NOTION_EMBEDDED_DIRNAME}" > /dev/null
-  git reset "${NOTION_ENHANCER_COMMIT}" --hard
-  rm -rf .git
-
   log "enhance" "injecting enhancer loader..."
-  for patchable_file in $(find . -type d \( -path "./${NOTION_EMBEDDED_DIRNAME}" -o -path ./node_modules \) -prune -false -o -name '*.js'); do
+  pushd "${NOTION_ENHANCED_SRC_DIRNAME}" > /dev/null
+  for patchable_file in $(find . -name '*.js'); do
     patchable_file_dir=$(dirname $patchable_file)
-    rel_loader_path=$(realpath "${NOTION_EMBEDDED_DIRNAME}/pkg/loader.js" --relative-to "$patchable_file_dir") 
+    rel_loader_path="$(realpath "${NOTION_EMBEDDED_DIRNAME}" --relative-to "$patchable_file_dir")/pkg/loader.js"
     [ $patchable_file_dir = '.' ] && rel_loader_path="./"$rel_loader_path
     rel_loader_require="require('${rel_loader_path}')(__filename, exports);"
 
@@ -147,14 +140,22 @@ if $enhance_build; then
     echo "${rel_loader_require}" >> $patchable_file
   done
 
+  log "enhance" "downloading enhancer src..."
+
+  git clone "${NOTION_ENHANCER_REPO_URL}" "${NOTION_EMBEDDED_DIRNAME}"
+
+  pushd "${NOTION_EMBEDDED_DIRNAME}" > /dev/null
+  git reset "${NOTION_ENHANCER_COMMIT}" --hard
+  rm -rf .git
+
   # patch
 
   log "patch" "applying notion patches..."
   pushd "${NOTION_ENHANCED_SRC_DIRNAME}" > /dev/null
+  sed -i 's|process.platform === "win32"|process.platform !== "darwin"|g' main/main.js
   find "${WORKSPACE_DIR}/patches/notion" -type f -wholename "*.patch" -print0 | while IFS= read -r -d '' file; do
       patch -p0 --binary < "$file"
   done
-  sed -i 's|process.platform === "win32"|process.platform !== "darwin"|g' main/main.js
 
   log "patch" "applying enhancer patches..."
   pushd "${NOTION_EMBEDDED_DIRNAME}" > /dev/null
@@ -210,6 +211,6 @@ if $compile_vanilla || $compile_enhanced; then
 
   log "compile" "running electron-builder..."
   node_modules/.bin/electron-builder \
-    --config $WORKSPACE_DIR/electron-builder.js $@
+    -c $WORKSPACE_DIR/electron-builder.js
 fi
 

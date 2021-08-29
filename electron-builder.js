@@ -10,10 +10,7 @@ const editionEnvVar = ensureEnvVar('NOTION_REPACKAGED_EDITION'),
   versionEnvVar = ensureEnvVar('NOTION_VERSION'),
   revisionEnvVar = ensureEnvVar('NOTION_REPACKAGED_REVISION');
 
-const versionFpmOptions = [
-  `--version=${versionEnvVar}`, 
-  `--iteration=${revisionEnvVar}`
-];
+const versionFpmOptions = [`--version=${versionEnvVar}`, `--iteration=${revisionEnvVar}`];
 
 module.exports = {
   asar: editionEnvVar === 'vanilla',
@@ -56,7 +53,7 @@ module.exports = {
     mimeTypes: ['x-scheme-handler/notion'],
     desktop: {
       StartupNotify: 'true',
-      StartupWMClass: editionEnvVar === 'vanilla' ? 'notion-app' : 'notion-app-enhanced'
+      StartupWMClass: editionEnvVar === 'vanilla' ? 'notion-app' : 'notion-app-enhanced',
     },
     target: ['AppImage', 'deb', 'rpm', 'pacman', 'zip'],
   },
