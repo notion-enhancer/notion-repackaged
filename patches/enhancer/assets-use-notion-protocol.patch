@@ -16,7 +16,7 @@
                document.head.appendChild(
                  createElement(
 -                  `<link rel="stylesheet" href="enhancement://${mod.dir}/${sheet}.css">`
-+                  `<link rel="stylesheet" href="notion://www.notion.so/__notion-enhancer/${mod.dir}/${sheet}.css">`
++                  `<link rel="stylesheet" href="file://${path.normalize(`${__dirname}/../${mod.dir}/${sheet}.css`)}">`
                  )
                );
              }
@@ -27,7 +27,7 @@
    margin: auto 1em -0.25em 1em;
    background-size: contain;
 -  background-image: url('enhancement://core/icons/mac+linux.png');
-+  background-image: url('notion://www.notion.so/__notion-enhancer/core/icons/mac+linux.png');
++  background-image: url('./icons/mac+linux.png');
    background-repeat: no-repeat;
  }
  #tabs {
