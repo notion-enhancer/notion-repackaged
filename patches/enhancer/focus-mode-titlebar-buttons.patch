@@ -1,0 +1,20 @@
+--- mods/focus-mode/app.css	2021-09-07 20:37:12.828940400 +1000
++++ mods/focus-mode/app.css	2021-09-07 20:37:37.171937900 +1000
+@@ -5,11 +5,15 @@
+  * under the MIT license
+  */
+ 
+-.notion-sidebar-container[style*='width: 0px;'] + .notion-frame .notion-topbar {
++.notion-sidebar-container[style*='width: 0px;'] + .notion-frame .notion-topbar,
++.notion-sidebar-container[style*='width: 0px;'] + .notion-frame .notion-topbar-action-buttons {
+   opacity: 0 !important;
+   transition: opacity 200ms ease-in-out !important;
+ }
+-.notion-sidebar-container[style*='width: 0px;'] + .notion-frame .notion-topbar:hover {
++.notion-sidebar-container[style*='width: 0px;'] + .notion-frame .notion-topbar:hover,
++.notion-sidebar-container[style*='width: 0px;']
++  + .notion-frame
++  .notion-topbar-action-buttons:hover {
+   opacity: 1 !important;
+ }
+ /* add space at the bottom of the main frame when sidebar is hidden

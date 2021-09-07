@@ -1,0 +1,21 @@
+--- mods/core/css/titlebar.css	2021-09-07 20:34:47.094524100 +1000
++++ mods/core/css/titlebar.css	2021-09-07 20:35:04.895701600 +1000
+@@ -46,3 +46,8 @@
+     justify-content: flex-end;
+   }
+ }
++
++body[data-has-window-buttons] .notion-topbar-action-buttons {
++  top: 17px !important;
++  right: 109px !important;
++}
+--- mods/core/client.js	2021-08-29 01:19:23.871537300 +1000
++++ mods/core/client.js	2021-09-07 20:50:27.283396400 +1000
+@@ -125,6 +125,7 @@
+       document
+         .querySelector('.notion-topbar > div[style*="display: flex"]')
+         .appendChild(buttons.element);
++      document.body.dataset.hasWindowButtons = true;
+     }
+     document
+       .querySelector('.notion-history-back-button')
