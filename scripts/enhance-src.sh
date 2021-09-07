@@ -24,8 +24,6 @@ PATCHED_PACKAGE_JSON=$(jq '
 echo "${PATCHED_PACKAGE_JSON}" > package.json
 
 log "Applying additional notion patches..."
-patch -p0 --binary < "${WORKSPACE_DIR}/patches/notion-check-relativeurl.patch"
-patch -p0 --binary < "${WORKSPACE_DIR}/patches/notion-protocol-handle-enhancer.patch"
 find "${WORKSPACE_DIR}/patches/notion" -type f -wholename "*.patch" -print0 | while IFS= read -r -d '' file; do
     patch -p0 --binary < "$file"
 done

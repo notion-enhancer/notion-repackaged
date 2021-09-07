@@ -49,6 +49,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           version: ${{ needs.preload-variables.outputs.notion_repackaged_version_rev }}
+          tag: v${{ needs.preload-variables.outputs.notion_repackaged_version_rev }}
 
   make-vanilla-sources:
     name: Make vanilla sources
