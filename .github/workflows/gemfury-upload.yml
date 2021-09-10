@@ -31,7 +31,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: [strip-revision]
     strategy:
-      fail-fast: true
       max-parallel: 2
       matrix:
         package_type: [deb, rpm]
