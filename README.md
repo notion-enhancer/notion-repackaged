@@ -28,13 +28,51 @@ Currently, we target the following package types:
 - pacman (Arch Linux, Manjaro)
 - zip (any, portable)
 
-Please refer to your distribution's documentation on information on how to install these packages, but we try some of them like this:
-- `AppImage` are runnable binaries, so to install them just run them. 
-- `deb` can be installed running: `sudo dpkg -i <downloaded file>.deb`
-- `pacman` can be installed running: `sudo pacman -U <downloaded file>.pacman`
-  > AUR builds are highly recommended instead. Install [notion-app](https://aur.archlinux.org/packages/notion-app/) or [notion-app-enhanced](https://aur.archlinux.org/packages/notion-app-enhanced) respectively.
+#### AppImage
+
+AppImages are binary installers that are compatible with any Linux distribution, to install them you can just run them.
+
+#### deb
+
+You can add our repository to your package manager by running
+
+```
+sudo apt-add-repository 'deb [trusted=yes] https://apt.fury.io/notion-repackaged/ /'
+```
+
+> :information_source: For the new repository to be able to provide our packages, you will have to run `sudo apt update` first
+
+With that you will be able to install `notion-app` or `notion-app-enhanced` using `sudo apt install <package name>`
+
+Alternatively, download manually and run `sudo dpkg -i <downloaded file>.deb` to install the package.
+
+#### rpm
+
+> :warning: These instructions assume you are using dnf/yum in Fedora or alikes. Instructions might vary depending on the distribution you are using.
+
+You can add our repository to your package manager by creating the file `/etc/yum.repos.d/notion-repackaged.repo` with the following contents:
+
+```
+[notion-repackaged]
+name=Notion Repackaged Repo
+baseurl=https://yum.fury.io/notion-repackaged/
+enabled=1
+gpgcheck=0
+```
+
+With that you will be able to install `notion-app` or `notion-app-enhanced` using `sudo dnf install <package name>`
+
+Alternatively, download manually and run `sudo rpm -i <downloaded file>.rpm` to install the package.
+
+#### pacman
+
+You can install the [notion-app](https://aur.archlinux.org/packages/notion-app/) or [notion-app-enhanced](https://aur.archlinux.org/packages/notion-app-enhanced) packages for the vanilla or enhanced versions respectively.
+
+Alternatively, download manually and run `sudo pacman -U <downloaded file>.pacman` to install the package.
 
 ### MacOS
+
+> :warning: As of now, the M1 (arm64) build is non-functional due to [electron-userland/electron-builder#5850](https://github.com/electron-userland/electron-builder/issues/5850), you can try using the regular build thanks to Rosetta. You can also try using the arm64 zip build that might work.
 
 We also build the enhanced variant for MacOS but there are no concrete instructions as I have no way of trying the builds for myself.
 
