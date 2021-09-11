@@ -10,19 +10,27 @@ const editionEnvVar = ensureEnvVar('NOTION_REPACKAGED_EDITION'),
   versionEnvVar = ensureEnvVar('NOTION_VERSION'),
   revisionEnvVar = ensureEnvVar('NOTION_REPACKAGED_REVISION');
 
-const versionFpmOptions = [
-  `--version=${versionEnvVar}`, 
-  `--iteration=${revisionEnvVar}`
+const isVanilla = editionEnvVar === 'vanilla';
+
+const productName = isVanilla ? 'Notion' : 'Notion Enhanced',
+  productId = isVanilla ? 'notion-app' : 'notion-app-enhanced',
+  conflictProductId = !isVanilla ? 'notion-app' : 'notion-app-enhanced',
+  productDescription =
+    editionEnvVar === 'vanilla'
+      ? 'The all-in-one workspace for your notes and tasks'
+      : 'The all-in-one workspace for your notes and tasks, but enhanced';
+
+const fpmOptions = [
+  `--version=${versionEnvVar}`,
+  `--iteration=${revisionEnvVar}`,
+  `--conflicts=${conflictProductId}`,
 ];
 
 module.exports = {
   asar: editionEnvVar === 'vanilla',
-  productName: editionEnvVar === 'vanilla' ? 'Notion' : 'Notion Enhanced',
+  productName: productName,
   extraMetadata: {
-    description:
-      editionEnvVar === 'vanilla'
-        ? 'The all-in-one workspace for your notes and tasks'
-        : 'The all-in-one workspace for your notes and tasks, but enhanced',
+    description: productDescription,
   },
   appId: 'com.github.notion-repackaged',
   protocols: [{ name: 'Notion', schemes: ['notion'] }],
@@ -56,11 +64,12 @@ module.exports = {
     mimeTypes: ['x-scheme-handler/notion'],
     desktop: {
       StartupNotify: 'true',
-      StartupWMClass: editionEnvVar === 'vanilla' ? 'notion-app' : 'notion-app-enhanced'
+      StartupWMClass: productId,
     },
     target: ['AppImage', 'deb', 'rpm', 'pacman', 'zip'],
   },
-  pacman: { fpm: versionFpmOptions },
-  rpm: { fpm: versionFpmOptions },
+  deb: { fpm: fpmOptions },
+  pacman: { fpm: fpmOptions },
+  rpm: { fpm: fpmOptions },
   publish: ['github'],
 };
