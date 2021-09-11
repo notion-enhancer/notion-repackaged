@@ -37,7 +37,7 @@ AppImages are binary installers that are compatible with any Linux distribution,
 You can add our repository to your package manager by running
 
 ```
-sudo apt-add-repository 'deb [trusted=yes] https://apt.fury.io/notion-repackaged/ /'
+echo "deb [trusted=yes] https://apt.fury.io/notion-repackaged/ /" | sudo tee /etc/apt/sources.list.d/notion-repackaged.list
 ```
 
 > :information_source: For the new repository to be able to provide our packages, you will have to run `sudo apt update` first
