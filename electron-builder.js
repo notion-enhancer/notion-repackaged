@@ -15,10 +15,9 @@ const isVanilla = editionEnvVar === 'vanilla';
 const productName = isVanilla ? 'Notion' : 'Notion Enhanced',
   productId = isVanilla ? 'notion-app' : 'notion-app-enhanced',
   conflictProductId = !isVanilla ? 'notion-app' : 'notion-app-enhanced',
-  productDescription =
-    editionEnvVar === 'vanilla'
-      ? 'The all-in-one workspace for your notes and tasks'
-      : 'The all-in-one workspace for your notes and tasks, but enhanced';
+  productDescription = isVanilla
+    ? 'The all-in-one workspace for your notes and tasks'
+    : 'The all-in-one workspace for your notes and tasks, but enhanced';
 
 const fpmOptions = [
   `--version=${versionEnvVar}`,
@@ -26,12 +25,11 @@ const fpmOptions = [
   `--conflicts=${conflictProductId}`,
 ];
 
-const combineTargetAndArch = (targets, architectures = ['x64', 'arm64']) => (
-  targets.map(target => ({ target, arch: architectures }))
-);
+const combineTargetAndArch = (targets, architectures = ['x64', 'arm64']) =>
+  targets.map((target) => ({ target, arch: architectures }));
 
 module.exports = {
-  asar: editionEnvVar === 'vanilla',
+  asar: isVanilla,
   productName: productName,
   extraMetadata: {
     description: productDescription,
