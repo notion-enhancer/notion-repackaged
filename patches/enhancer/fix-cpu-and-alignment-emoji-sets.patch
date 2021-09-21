@@ -1,0 +1,60 @@
+--- /dev/null	2021-09-20 15:50:59.380000000 +0200
++++ mods/emoji-sets/app.css	2021-09-19 19:49:43.580063500 +0200
+@@ -0,0 +1,11 @@
++/*
++ * emoji sets
++ * (c) 2020 dragonwocky <thedragonring.bod@gmail.com> (https://dragonwocky.me/)
++ * (c) this css fix was provided by Arecsu from martyr⁠— (https://martyr.shop/)
++ * under the MIT license
++ */
++
++div.notion-record-icon [style*='Apple Color Emoji'] {
++  display: flex;
++  justify-content: center;
++}
+\ No newline at end of file
+--- mods/emoji-sets/mod.js	2021-09-20 23:30:29.667952800 +0200
++++ mods/emoji-sets/mod.js	2021-09-20 12:42:17.959115900 +0200
+@@ -1,6 +1,7 @@
+ /*
+  * emoji sets
+  * (c) 2020 dragonwocky <thedragonring.bod@gmail.com> (https://dragonwocky.me/)
++ * (c) minor fixes by Arecsu from martyr⁠— (https://martyr.shop/)
+  * under the MIT license
+  */
+ 
+@@ -46,13 +47,19 @@
+           if (!queue.length) requestAnimationFrame(handle);
+           queue.push(...list);
+         });
+-        observer.observe(document.body, {
+-          childList: true,
+-          subtree: true,
+-          characterData: true,
+-        });
++
++        const observe = ()=> {
++          observer.observe(document.body, {
++            childList: true,
++            subtree: true,
++            characterData: true,
++          });
++        };
++        observe(); // initiate observer
++
+         function handle() {
+           queue = [];
++          observer.disconnect(); // stop observer from getting stuck into an infinite loop from here
+           const isMac = process.platform === 'darwin',
+             native =
+               (store().style === 'microsoft' && process.platform === 'win32') ||
+@@ -138,6 +145,8 @@
+             }
+             tweaked = true;
+           }
++    
++        observe(); // re-initiating the observer now that we don't risk an infinite loop
+         }
+       });
+     },
+
