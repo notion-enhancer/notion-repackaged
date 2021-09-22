@@ -15,10 +15,9 @@ const isVanilla = editionEnvVar === 'vanilla';
 const productName = isVanilla ? 'Notion' : 'Notion Enhanced',
   productId = isVanilla ? 'notion-app' : 'notion-app-enhanced',
   conflictProductId = !isVanilla ? 'notion-app' : 'notion-app-enhanced',
-  productDescription =
-    editionEnvVar === 'vanilla'
-      ? 'The all-in-one workspace for your notes and tasks'
-      : 'The all-in-one workspace for your notes and tasks, but enhanced';
+  productDescription = isVanilla
+    ? 'The all-in-one workspace for your notes and tasks'
+    : 'The all-in-one workspace for your notes and tasks, but enhanced';
 
 const fpmOptions = [
   `--version=${versionEnvVar}`,
@@ -26,8 +25,11 @@ const fpmOptions = [
   `--conflicts=${conflictProductId}`,
 ];
 
+const combineTargetAndArch = (targets, architectures = ['x64', 'arm64']) =>
+  targets.map((target) => ({ target, arch: architectures }));
+
 module.exports = {
-  asar: editionEnvVar === 'vanilla',
+  asar: isVanilla,
   productName: productName,
   extraMetadata: {
     description: productDescription,
@@ -36,7 +38,7 @@ module.exports = {
   protocols: [{ name: 'Notion', schemes: ['notion'] }],
   win: {
     icon: 'icon.ico',
-    target: ['nsis', 'zip'],
+    target: combineTargetAndArch(['nsis', 'zip'], ['x64']),
   },
   nsis: {
     installerIcon: 'icon.ico',
@@ -46,16 +48,7 @@ module.exports = {
   mac: {
     icon: 'icon.icns',
     category: 'public.app-category.productivity',
-    target: [
-      {
-        target: 'dmg',
-        arch: ['x64', 'arm64'],
-      },
-      {
-        target: 'zip',
-        arch: ['x64', 'arm64'],
-      },
-    ],
+    target: combineTargetAndArch(['dmg', 'zip']),
   },
   linux: {
     icon: 'icon.icns',
@@ -66,7 +59,7 @@ module.exports = {
       StartupNotify: 'true',
       StartupWMClass: productId,
     },
-    target: ['AppImage', 'deb', 'rpm', 'pacman', 'zip'],
+    target: combineTargetAndArch(['AppImage', 'deb', 'rpm', 'pacman', 'zip']),
   },
   deb: { fpm: fpmOptions },
   pacman: { fpm: fpmOptions },
