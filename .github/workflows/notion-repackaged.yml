@@ -42,7 +42,7 @@ jobs:
     name: Create release
     runs-on: ubuntu-latest
     needs: [preload-variables]
-    if: ${{ env.NOTION_REPACKAGED_CAN_PUBLISH }}
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
     steps:
       - uses: actions/checkout@v2
       - uses: release-drafter/release-drafter@v5
