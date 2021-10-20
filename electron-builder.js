@@ -38,7 +38,10 @@ module.exports = {
   protocols: [{ name: 'Notion', schemes: ['notion'] }],
   win: {
     icon: 'icon.ico',
-    target: combineTargetAndArch(['nsis', 'zip'], ['x64']),
+    target: combineTargetAndArch(
+      ['nsis', 'zip'], 
+      ['x64'],
+    ),
   },
   nsis: {
     installerIcon: 'icon.ico',
@@ -48,7 +51,9 @@ module.exports = {
   mac: {
     icon: 'icon.icns',
     category: 'public.app-category.productivity',
-    target: combineTargetAndArch(['dmg', 'zip']),
+    target: combineTargetAndArch(
+      ['dmg', 'zip'],
+    ),
   },
   linux: {
     icon: 'icon.icns',
@@ -59,7 +64,10 @@ module.exports = {
       StartupNotify: 'true',
       StartupWMClass: productId,
     },
-    target: combineTargetAndArch(['AppImage', 'deb', 'rpm', 'pacman', 'zip']),
+    target: combineTargetAndArch(
+      ['AppImage', 'deb', 'rpm', 'pacman', 'zip'], 
+      ['x64'],
+    ),
   },
   deb: { fpm: fpmOptions },
   pacman: { fpm: fpmOptions },
