@@ -67,6 +67,11 @@ jobs:
         run: scripts/download-exe.sh
       - name: Extract sources from Windows Build
         run: scripts/extract-src.sh
+      - name: Convert source files to LF line ending
+        working-directory: build
+        run: |
+          sudo apt-get install -y dos2unix
+          find vanilla-src -type f -print0 | xargs -0 dos2unix
       - name: Zip sources dir with 7z
         working-directory: build
         run: 7z a vanilla-src.zip vanilla-src
@@ -96,6 +101,11 @@ jobs:
         env:
           NOTION_ENHANCER_COMMIT: ${{ needs.preload-variables.outputs.notion_enhancer_commit }}
         run: scripts/enhance-src.sh
+      - name: Convert source files to LF line ending
+        working-directory: build
+        run: |
+          sudo apt-get install -y dos2unix
+          find enhanced-src -type f -print0 | xargs -0 dos2unix
       - name: Zip sources dir with 7z
         working-directory: build
         run: 7z a enhanced-src.zip enhanced-src
@@ -142,14 +152,7 @@ jobs:
         run: 7z x sources.zip
       - name: Install Linux build dependencies
         if: matrix.os == 'ubuntu-latest'
-        run: sudo apt-get install --no-install-recommends -y libopenjp2-tools rpm libarchive-tools dos2unix
-      - name: Install MacOS build dependencies
-        if: matrix.os == 'macos-latest'
-        run: brew install dos2unix
-      - name: Convert source files to LF line ending
-        if: matrix.os != 'windows-latest'
-        working-directory: ${{ matrix.edition }}-src
-        run: find . -type f -print0 | xargs -0 dos2unix
+        run: sudo apt-get install --no-install-recommends -y libopenjp2-tools rpm libarchive-tools
       - name: Install dependencies
         working-directory: ${{ matrix.edition }}-src
         run: npm install
