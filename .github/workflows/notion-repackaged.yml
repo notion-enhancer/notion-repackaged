@@ -139,6 +139,10 @@ jobs:
           path: sources.zip
       - name: Unzip sources with 7z
         run: 7z x sources.zip
+      - name: Convert source files to LF line ending
+        if: matrix.os != 'windows-latest'
+        working-directory: ${{ matrix.edition }}-src
+        run: find . -type f -print0 | xargs -0 dos2unix
       - name: Install Linux build dependencies
         if: matrix.os == 'ubuntu-latest'
         run: sudo apt-get install --no-install-recommends -y libopenjp2-tools rpm libarchive-tools
