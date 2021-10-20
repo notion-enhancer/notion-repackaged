@@ -2,7 +2,6 @@ name: Notion Repackaged Main
 
 on:
   push:
-    branches: [main]
     paths:
       - 'notion-repackaged.sh'
       - '.github/workflows/notion-repackaged.yml'
@@ -12,6 +11,7 @@ on:
 
 env:
   NOTION_REPACKAGED_DEBUG: true
+  NOTION_REPACKAGED_CAN_PUBLISH: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
 
 jobs:
   preload-variables:
@@ -42,6 +42,7 @@ jobs:
     name: Create release
     runs-on: ubuntu-latest
     needs: [preload-variables]
+    if: ${{ env.NOTION_REPACKAGED_CAN_PUBLISH }}
     steps:
       - uses: actions/checkout@v2
       - uses: release-drafter/release-drafter@v5
@@ -163,7 +164,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NOTION_REPACKAGED_EDITION: ${{ matrix.edition }}
-        run: npx electron-builder --${{ matrix.target }} -c ../electron-builder.js
+          NOTION_REPACKAGED_PUBLISH: ${{ env.NOTION_REPACKAGED_CAN_PUBLISH && 'onTagOrDraft' || 'never' }}
+        run: npx electron-builder --${{ matrix.target }} -c ../electron-builder.js -p $NOTION_REPACKAGED_PUBLISH
 
   cleanup:
     name: Cleanup artifacts
