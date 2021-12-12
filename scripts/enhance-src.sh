@@ -2,82 +2,89 @@
 set -e
 
 source `dirname $0`/_utils.sh
-check-debug-expands
-workspace-dir-pushd
+workdir ${WORKSPACE_BUILD_DIR}
 
-check-cmd jq git convert png2icns
-check-env NOTION_ENHANCER_COMMIT
+check-cmd jq git convert png2icns node sponge
+check-env NOTION_ENHANCER_DESKTOP_COMMIT
 
 if [ -d "${NOTION_ENHANCED_SRC_NAME}" ]; then
   log "Removing already enhanced sources..."
   rm -rf "${NOTION_ENHANCED_SRC_NAME}"
 fi
 
+if [ ! -d "${NOTION_VANILLA_SRC_NAME}" ]; then
+  log "Could not find vanilla sources directory"
+  exit -1
+fi
+
 cp -r "${NOTION_VANILLA_SRC_NAME}" "${NOTION_ENHANCED_SRC_NAME}"
 
 pushd "${NOTION_ENHANCED_SRC_NAME}" > /dev/null
 
-log "Patching package.json for being enhanced"
-PATCHED_PACKAGE_JSON=$(jq '
-  .dependencies += {"keyboardevent-from-electron-accelerator": "^2.0.0"} |
-  .name="notion-app-enhanced"' package.json)
-echo "${PATCHED_PACKAGE_JSON}" > package.json
+log "Patching package.json for being enhanced..."
 
-log "Applying additional notion patches..."
-find "${WORKSPACE_DIR}/patches/notion" -type f -wholename "*.patch" -print0 | while IFS= read -r -d '' file; do
-    patch -p0 --binary < "$file"
-done
+jq '.name="notion-app-enhanced"' package.json | sponge package.json
 
-log "Fetching enhancer sources..."
-
-export NOTION_ENHANCER_REPO_URL="https://github.com/notion-enhancer/notion-enhancer"
-git clone "${NOTION_ENHANCER_REPO_URL}" "${NOTION_EMBEDDED_NAME}"
-
-pushd "${NOTION_EMBEDDED_NAME}" > /dev/null
-git reset "${NOTION_ENHANCER_COMMIT}" --hard
-rm -rf .git
-
-log "Applying enhancer patches..."
-find "${WORKSPACE_DIR}/patches/enhancer" -type f -wholename "*.patch" -print0 | while IFS= read -r -d '' file; do
-    patch -p0 --binary < "$file"
-done
 popd > /dev/null
 
-log "Injecting enhancer loader..."
-for patchable_file in $(find . -type d \( -path ./${NOTION_EMBEDDED_NAME} -o -path ./node_modules \) -prune -false -o -name '*.js'); do
-  patchable_file_dir=$(dirname $patchable_file)
-  rel_loader_path=$(realpath ${NOTION_EMBEDDED_NAME}/pkg/loader.js --relative-to $patchable_file_dir)
-  [ $patchable_file_dir = '.' ] && rel_loader_path="./"$rel_loader_path
-  rel_loader_require="require('${rel_loader_path}')(__filename, exports);"
+if [ ! -d "${NOTION_ENHANCER_REPO_NAME}" ]; then
+  log "Cloning enhancer desktop repo..."
+  git clone "${NOTION_ENHANCER_REPO_URL}" "${NOTION_ENHANCER_REPO_NAME}"
+fi
 
-  echo -e "\n\n" >> $patchable_file
-  echo "//notion-enhancer" >> $patchable_file
-  echo "${rel_loader_require}" >> $patchable_file
-done
+pushd "${NOTION_ENHANCER_REPO_NAME}" > /dev/null
 
-log "Swapping out vanilla icons..."
-mkdir -p vanilla
-mv icon.icns vanilla/icon.icns
-mv icon.png vanilla/icon.png
-mv icon.ico vanilla/icon.ico
+log "Checking out enhancer desktop..."
+git fetch
+git checkout ${NOTION_ENHANCER_DESKTOP_COMMIT}
+git submodule update --init --recursive
 
-enhancer_icons="${WORKSPACE_DIR}/assets/enhancer-icons"
+log "Installing enhancer desktop dependencies..."
+npm install
 
-cp "${enhancer_icons}/512x512.png" icon.png
+log "Applying enhancer to the sources..."
+NOTION_ENHANCED_SRC="${WORKSPACE_BUILD_DIR}/${NOTION_ENHANCED_SRC_NAME}"
+
+# sources do not have node_modules yet, so just make an empty one
+mkdir -p "${NOTION_ENHANCED_SRC}/node_modules"
+
+# hack for simulating the resources/app directory of electron
+ln -s "${NOTION_ENHANCED_SRC}" "${NOTION_ENHANCED_SRC}/app"
+
+# call the CLI of notion-enhancer directly, simulating resources dir
+node bin.mjs apply -y --no-backup --path="${NOTION_ENHANCED_SRC}"
+
+# undo the hack after applying the enhancer
+rm -vf "${NOTION_ENHANCED_SRC}/app"
+
+popd > /dev/null
+
+pushd "${NOTION_ENHANCED_SRC_NAME}" > /dev/null
+
+# fix for enhancer module getting removed when installing dependencies
+mv node_modules/notion-enhancer shared/ && rmdir node_modules
+jq '.dependencies += {"notion-enhancer": "file:shared/notion-enhancer"}' package.json | sponge package.json
+
+log "Swapping out icons..."
+rm -vf icon.icns icon.png icon.ico 
+
+NOTION_ENHANCER_ICONS="shared/notion-enhancer/media"
+
+cp "${NOTION_ENHANCER_ICONS}/colour-x512.png" icon.png
 
 log "Converting icon to multi-size ico for Windows"
 # http://www.imagemagick.org/Usage/thumbnails/#favicon
-convert "${enhancer_icons}/512x512.png" -resize 256x256 \
+convert "${NOTION_ENHANCER_ICONS}/colour-x512.png" -resize 256x256 \
   -define icon:auto-resize="256,128,96,64,48,32,16" \
   icon.ico
 
 log "Converting icon to multi-size for Mac and Linux"
 # https://askubuntu.com/questions/223215/how-can-i-convert-a-png-file-to-icns
 png2icns icon.icns \
-  "${enhancer_icons}/512x512.png" \
-  "${enhancer_icons}/256x256.png" \
-  "${enhancer_icons}/128x128.png" \
-  "${enhancer_icons}/32x32.png" \
-  "${enhancer_icons}/16x16.png"
+  "${NOTION_ENHANCER_ICONS}/colour-x512.png" \
+  "${NOTION_ENHANCER_ICONS}/colour-x256.png" \
+  "${NOTION_ENHANCER_ICONS}/colour-x128.png" \
+  "${NOTION_ENHANCER_ICONS}/colour-x32.png" \
+  "${NOTION_ENHANCER_ICONS}/colour-x16.png"
 
 popd > /dev/null

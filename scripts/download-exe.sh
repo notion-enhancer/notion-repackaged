@@ -2,8 +2,7 @@
 set -e
 
 source `dirname $0`/_utils.sh
-check-debug-expands
-workspace-dir-pushd
+workdir ${WORKSPACE_BUILD_DIR}
 
 check-cmd curl md5sum
 check-env NOTION_VERSION NOTION_DOWNLOAD_HASH

@@ -29,7 +29,7 @@ const combineTargetAndArch = (targets, architectures = ['x64', 'arm64']) =>
   targets.map((target) => ({ target, arch: architectures }));
 
 module.exports = {
-  asar: isVanilla,
+  asar: true,
   productName: productName,
   extraMetadata: {
     description: productDescription,
@@ -61,7 +61,21 @@ module.exports = {
     },
     target: combineTargetAndArch(['AppImage', 'deb', 'rpm', 'pacman', 'zip']),
   },
-  deb: { fpm: fpmOptions },
+  deb: {
+    fpm: fpmOptions,
+    depends: [
+      'libgtk-3-0',
+      'libnotify4',
+      'libnss3',
+      'libxss1',
+      'libxtst6',
+      'xdg-utils',
+      'libatspi2.0-0',
+      'libuuid1',
+      'libsecret-1-0',
+      /* 'libappindicator3-1', */
+    ],
+  },
   pacman: { fpm: fpmOptions },
   rpm: { fpm: fpmOptions },
   publish: ['github'],

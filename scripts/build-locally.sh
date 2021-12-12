@@ -2,8 +2,7 @@
 set -e
 
 source `dirname $0`/_utils.sh
-check-debug-expands
-workspace-dir-pushd
+workdir ${WORKSPACE_BUILD_DIR}
 
 check-cmd jq git
 check-env NOTION_VERSION NOTION_REPACKAGED_REVISION
@@ -31,6 +30,9 @@ pushd "${NOTION_REPACKAGED_EDITION_SRCDIR}" > /dev/null
 
 log "Installing dependencies..."
 npm install
+
+log "Running patch-package"
+npx patch-package
 
 log "Install electron and electron-builder..."
 npm install electron@11 electron-builder --save-dev

@@ -60,6 +60,8 @@ jobs:
       NOTION_REPACKAGED_REVISION: ${{ needs.preload-variables.outputs.notion_repackaged_revision }}
     steps:
       - uses: actions/checkout@v2
+      - name: Install moreutils
+        run: sudo apt-get install -y moreutils
       - name: Download official Windows build
         env:
           NOTION_DOWNLOAD_HASH: ${{ needs.preload-variables.outputs.notion_download_hash }}
@@ -81,6 +83,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - name: Install icnsutils and moreutils
+        run: sudo apt-get install -y icnsutils moreutils
       - name: Retrieve saved vanilla sources
         uses: actions/download-artifact@v2
         with:
@@ -89,8 +93,6 @@ jobs:
       - name: Unzip sources with 7z
         working-directory: build
         run: 7z x vanilla-src.zip
-      - name: Install icnsutils
-        run: sudo apt-get install -y icnsutils
       - name: Enhance extracted sources
         env:
           NOTION_ENHANCER_COMMIT: ${{ needs.preload-variables.outputs.notion_enhancer_commit }}
@@ -157,7 +159,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NOTION_REPACKAGED_EDITION: ${{ matrix.edition }}
         run: npx electron-builder --${{ matrix.target }} -c ../electron-builder.js
-
+      - name: Print packages md5 checksums
+        run: find ./dist/ -type f -exec md5sum {} +
   cleanup:
     name: Cleanup artifacts
     if: always()
