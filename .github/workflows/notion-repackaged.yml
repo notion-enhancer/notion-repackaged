@@ -162,7 +162,9 @@ jobs:
           NOTION_REPACKAGED_EDITION: ${{ matrix.edition }}
         run: npx electron-builder --${{ matrix.target }} -c ../electron-builder.js
       - name: Print packages md5 checksums
-        run: find ./dist/ -type f -exec md5sum {} +
+        working-directory: ${{ matrix.edition }}-src
+        run: find ./dist/ -maxdepth 1 -type f -exec openssl md5 {} +
+        shell: bash
   cleanup:
     name: Cleanup artifacts
     if: always()
