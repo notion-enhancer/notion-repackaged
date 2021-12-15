@@ -72,7 +72,7 @@ Alternatively, download manually and run `sudo pacman -U <downloaded file>.pacma
 
 ### MacOS
 
-> :warning: As of now, the M1 (arm64) build is non-functional due to [electron-userland/electron-builder#5850](https://github.com/electron-userland/electron-builder/issues/5850), you can try using the regular build thanks to Rosetta. You can also try using the arm64 zip build that might work.
+> :warning: As of now, the M1 (arm64) build might be non-functional due to [electron-userland/electron-builder#5850](https://github.com/electron-userland/electron-builder/issues/5850), you can try using the regular build thanks to Rosetta. You can also try using the arm64 zip build that might work.
 
 We also build the enhanced variant for MacOS but there are no concrete instructions as I have no way of trying the builds for myself.
 
@@ -86,19 +86,20 @@ Please, take look at the official instructions from Apple on how to install unsi
 
 If you find yourself not being able to use our builds, please create an issue with any and all information you can provide on how to reproduce and debug this issue. Screenshots and terminal logs are vital to being able to reproduce and fix the issues.
 
-If you have an issue with the enhanced variant, please try using the vanilla variant. This step is crucial on the way to figuring our the root of the issue. Do not create issues in notion-enhancer before making sure it's not our fault, we modify notion-enhancer's internals heavily.
+If you have an issue with the enhanced variant, please try using the vanilla variant. This step is crucial on the way to figuring our the root of the issue.
 
 ## Contributing
 
 Any contribution is welcome, be it documentation, code improvements or fixes.
-We don't plan on improving notion-enhancer, we aim to be compatible with it and track their changes.
+
+For issues or feature requests and it's related to the enhanced version, consider submitting it to the proper repo under the [https://github.com/notion-enhancer](notion-enhancer organization), unless you have an issue specific to this repackaged version.
 
 ## Disclaimer
 
 This project extracts the source code of the publicly-available binaries on the [official Notion website](https://www.notion.so/desktop), meaning all code contained within our packages is owned by Notion.
 
-Additionally, in the enhanced variant, we embed [notion-enhancer](https://github.com/notion-enhancer/notion-enhancer) which is MIT licensed. All code contained in the `embedded_enhancer` directory and the icons in the `assets` directory are owned by them.
+Additionally, in the enhanced variant, we embed [notion-enhancer](https://github.com/notion-enhancer/notion-enhancer) which is MIT licensed.
 
-This project is made as a best-effort, integrating and supporting all Linux distributions as well as other OSes like Mac and Windows is very complicated. 
+This project is made as a best-effort, integrating and supporting all Linux distributions as well as other OSes like Mac and Windows is very complicated.
 
 We are not liable for any problems caused by this (or included) software.
