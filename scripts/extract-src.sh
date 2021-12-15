@@ -36,8 +36,6 @@ log "Copying original app resources..."
 mkdir -p "${NOTION_VANILLA_SRC_NAME}"
 cp -r "${NOTION_EXTRACTED_APP_NAME}/resources/app/"* "${NOTION_VANILLA_SRC_NAME}"
 
-export NOTION_REPACKAGED_VERSION_REV="${NOTION_VERSION}-${NOTION_REPACKAGED_REVISION}"
-
 pushd "${NOTION_VANILLA_SRC_NAME}" > /dev/null
 
 log "Patching and cleaning source"
@@ -60,11 +58,13 @@ find . -type f -name "*.js.map" -exec rm {} +
 
 log "Adapting package.json including fixes..."
 
+NOTION_APP_PACKAGE_VERSION="${NOTION_VERSION}-vanilla.${NOTION_REPACKAGED_REVISION}"
+
 jq \
+  --arg version "${NOTION_APP_PACKAGE_VERSION}" \
   --arg homepage "${NOTION_REPACKAGED_HOMEPAGE}" \
   --arg repo "${NOTION_REPACKAGED_REPO}" \
   --arg author "${NOTION_REPACKAGED_AUTHOR}" \
-  --arg version "${NOTION_REPACKAGED_VERSION_REV}" \
   '.dependencies.cld="2.7.0" | 
   .name="notion-app" | 
   .homepage=$homepage | 
