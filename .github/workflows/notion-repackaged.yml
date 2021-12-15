@@ -85,6 +85,8 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install icnsutils and moreutils
         run: sudo apt-get install -y icnsutils moreutils
+      - name: Force to use HTTPS instead of SSH
+        run: git config --global url."https://github.com/".insteadOf "git@github.com:"
       - name: Retrieve saved vanilla sources
         uses: actions/download-artifact@v2
         with:
