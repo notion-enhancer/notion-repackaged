@@ -92,7 +92,7 @@ If you have an issue with the enhanced variant, please try using the vanilla var
 
 Any contribution is welcome, be it documentation, code improvements or fixes.
 
-For issues or feature requests and it's related to the enhanced version, consider submitting it to the proper repo under the [https://github.com/notion-enhancer](notion-enhancer organization), unless you have an issue specific to this repackaged version.
+For issues or feature requests and it's related to the enhanced version, consider submitting it to the proper repo under the [notion-enhancer organization](https://github.com/notion-enhancer), unless you have an issue specific to this repackaged version.
 
 ## Disclaimer
 
