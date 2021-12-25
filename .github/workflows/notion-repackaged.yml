@@ -29,7 +29,7 @@ jobs:
           echo "::set-output name=notion_download_hash::$NOTION_DOWNLOAD_HASH"
           echo "::set-output name=notion_enhancer_desktop_commit::$NOTION_ENHANCER_DESKTOP_COMMIT"
 
-          NOTION_REPACKAGED_VERSION_REV="${NOTION_VERSION}-{0}.${NOTION_REPACKAGED_REVISION}"
+          NOTION_REPACKAGED_VERSION_REV="${NOTION_VERSION}-${NOTION_REPACKAGED_REVISION}"
           echo "::set-output name=notion_repackaged_version_rev::$NOTION_REPACKAGED_VERSION_REV"
     outputs:
       notion_version: ${{ steps.preload-variables.outputs.notion_version }}
@@ -42,17 +42,14 @@ jobs:
     name: Create release
     runs-on: ubuntu-latest
     needs: [preload-variables]
-    strategy:
-      matrix:
-        edition: [vanilla, enhanced]
     steps:
       - uses: actions/checkout@v2
       - uses: release-drafter/release-drafter@v5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          version: ${{ format(needs.preload-variables.outputs.notion_repackaged_version_rev, matrix.edition) }}
-          tag: v${{ format(needs.preload-variables.outputs.notion_repackaged_version_rev, matrix.edition) }}
+          version: ${{ needs.preload-variables.outputs.notion_repackaged_version_rev }}
+          tag: v${{ needs.preload-variables.outputs.notion_repackaged_version_rev }}
 
   make-vanilla-sources:
     name: Make vanilla sources
@@ -82,11 +79,8 @@ jobs:
 
   make-enhanced-sources:
     name: Make enhanced sources
-    runs-on: ubuntu-latest
     needs: [make-vanilla-sources, preload-variables]
-    env:
-      NOTION_VERSION: ${{ needs.preload-variables.outputs.notion_version }}
-      NOTION_REPACKAGED_REVISION: ${{ needs.preload-variables.outputs.notion_repackaged_revision }}
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - name: Install icnsutils and moreutils

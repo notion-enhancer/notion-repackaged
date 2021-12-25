@@ -5,7 +5,7 @@ source `dirname $0`/_utils.sh
 workdir ${WORKSPACE_BUILD_DIR}
 
 check-cmd jq git convert png2icns node sponge
-check-env NOTION_VERSION NOTION_REPACKAGED_REVISION NOTION_ENHANCER_DESKTOP_COMMIT
+check-env NOTION_ENHANCER_DESKTOP_COMMIT
 
 if [ -d "${NOTION_ENHANCED_SRC_NAME}" ]; then
   log "Removing already enhanced sources..."
@@ -23,13 +23,7 @@ pushd "${NOTION_ENHANCED_SRC_NAME}" > /dev/null
 
 log "Patching package.json for being enhanced..."
 
-NOTION_APP_PACKAGE_VERSION="${NOTION_VERSION}-enhanced.${NOTION_REPACKAGED_REVISION}"
-
-jq \
-  --arg version "${NOTION_APP_PACKAGE_VERSION}" \
-  '.name="notion-app-enhanced" |
-  .version=$version' \
-  package.json | sponge package.json
+jq '.name="notion-app-enhanced"' package.json | sponge package.json
 
 popd > /dev/null
 
