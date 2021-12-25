@@ -28,6 +28,14 @@ const fpmOptions = [
 const combineTargetAndArch = (targets, architectures = ['x64', 'arm64']) =>
   targets.map((target) => ({ target, arch: architectures }));
 
+// realistically Auto Update only works for Windows
+const getPublishProviders = (platform) => [
+  {
+    provider: 'github',
+    publishAutoUpdate: platform === 'win',
+  },
+];
+
 module.exports = {
   asar: true,
   productName: productName,
@@ -39,16 +47,13 @@ module.exports = {
   win: {
     icon: 'icon.ico',
     target: combineTargetAndArch(['nsis', 'zip'], ['x64']),
-  },
-  nsis: {
-    installerIcon: 'icon.ico',
-    oneClick: false,
-    perMachine: false,
+    publish: getPublishProviders('win'),
   },
   mac: {
     icon: 'icon.icns',
     category: 'public.app-category.productivity',
     target: combineTargetAndArch(['dmg', 'zip']),
+    publish: getPublishProviders('mac'),
   },
   linux: {
     icon: 'icon.icns',
@@ -60,6 +65,12 @@ module.exports = {
       StartupWMClass: productId,
     },
     target: combineTargetAndArch(['AppImage', 'deb', 'rpm', 'pacman', 'zip']),
+    publish: getPublishProviders('linux'),
+  },
+  nsis: {
+    installerIcon: 'icon.ico',
+    oneClick: false,
+    perMachine: false,
   },
   deb: {
     fpm: fpmOptions,
@@ -78,5 +89,4 @@ module.exports = {
   },
   pacman: { fpm: fpmOptions },
   rpm: { fpm: fpmOptions },
-  publish: ['github'],
 };
