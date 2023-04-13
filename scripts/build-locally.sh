@@ -5,7 +5,7 @@ source `dirname $0`/_utils.sh
 workdir ${WORKSPACE_BUILD_DIR}
 
 check-cmd jq git
-check-env NOTION_VERSION NOTION_REPACKAGED_REVISION
+check-env NOTION_VERSION NOTION_REPACKAGED_REVISION NOTION_ELECTRON_VERSION
 
 if [ -z "${NOTION_REPACKAGED_EDITION}" ]; then
   log "Cannot build without knowing the edition to build, please set NOTION_REPACKAGED_EDITION env var"
@@ -13,9 +13,9 @@ if [ -z "${NOTION_REPACKAGED_EDITION}" ]; then
 fi
 
 if [ "${NOTION_REPACKAGED_EDITION}" == "enhanced" ]; then
-  NOTION_REPACKAGED_EDITION_SRCDIR="${NOTION_ENHANCED_SRC_NAME}"
+  NOTION_REPACKAGED_EDITION_SRCDIR="${NOTION_ENHANCED_SRC_DIRNAME}"
 elif [ "${NOTION_REPACKAGED_EDITION}" == "vanilla" ]; then
-  NOTION_REPACKAGED_EDITION_SRCDIR="${NOTION_VANILLA_SRC_NAME}"
+  NOTION_REPACKAGED_EDITION_SRCDIR="${NOTION_VANILLA_SRC_DIRNAME}"
 else
   log "Invalid value for the NOTION_REPACKAGED_EDITION env var, it has to either be 'vanilla' or 'enhanced'"
   exit -1
@@ -35,7 +35,7 @@ log "Running patch-package"
 npx patch-package
 
 log "Install electron and electron-builder..."
-npm install electron@11 electron-builder --save-dev
+npm install electron@${NOTION_ELECTRON_VERSION} electron-builder --save-dev
 
 log "Running electron-builder..."
 node_modules/.bin/electron-builder \

@@ -28,6 +28,7 @@ jobs:
           echo "::set-output name=notion_repackaged_revision::$NOTION_REPACKAGED_REVISION"
           echo "::set-output name=notion_download_hash::$NOTION_DOWNLOAD_HASH"
           echo "::set-output name=notion_enhancer_desktop_commit::$NOTION_ENHANCER_DESKTOP_COMMIT"
+          echo "::set-output name=notion_electron_version::$NOTION_ELECTRON_VERSION" 
 
           NOTION_REPACKAGED_VERSION_REV="${NOTION_VERSION}-${NOTION_REPACKAGED_REVISION}"
           echo "::set-output name=notion_repackaged_version_rev::$NOTION_REPACKAGED_VERSION_REV"
@@ -115,6 +116,7 @@ jobs:
     env:
       NOTION_VERSION: ${{ needs.preload-variables.outputs.notion_version }}
       NOTION_REPACKAGED_REVISION: ${{ needs.preload-variables.outputs.notion_repackaged_revision }}
+      NOTION_ELECTRON_VERSION: ${{ needs.preload-variables.outputs.notion_electron_version }}
     strategy:
       matrix:
         target: [windows, linux, macos]

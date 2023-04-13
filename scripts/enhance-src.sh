@@ -7,19 +7,19 @@ workdir ${WORKSPACE_BUILD_DIR}
 check-cmd jq git convert png2icns node sponge
 check-env NOTION_ENHANCER_DESKTOP_COMMIT
 
-if [ -d "${NOTION_ENHANCED_SRC_NAME}" ]; then
+if [ -d "${NOTION_ENHANCED_SRC_DIRNAME}" ]; then
   log "Removing already enhanced sources..."
-  rm -rf "${NOTION_ENHANCED_SRC_NAME}"
+  rm -rf "${NOTION_ENHANCED_SRC_DIRNAME}"
 fi
 
-if [ ! -d "${NOTION_VANILLA_SRC_NAME}" ]; then
+if [ ! -d "${NOTION_VANILLA_SRC_DIRNAME}" ]; then
   log "Could not find vanilla sources directory"
   exit -1
 fi
 
-cp -r "${NOTION_VANILLA_SRC_NAME}" "${NOTION_ENHANCED_SRC_NAME}"
+cp -r "${NOTION_VANILLA_SRC_DIRNAME}" "${NOTION_ENHANCED_SRC_DIRNAME}"
 
-pushd "${NOTION_ENHANCED_SRC_NAME}" > /dev/null
+pushd "${NOTION_ENHANCED_SRC_DIRNAME}" > /dev/null
 
 log "Patching package.json for being enhanced..."
 
@@ -27,12 +27,12 @@ jq '.name="notion-app-enhanced"' package.json | sponge package.json
 
 popd > /dev/null
 
-if [ ! -d "${NOTION_ENHANCER_REPO_NAME}" ]; then
+if [ ! -d "${NOTION_ENHANCER_REPO_DIRNAME}" ]; then
   log "Cloning enhancer desktop repo..."
-  git clone "${NOTION_ENHANCER_REPO_URL}" "${NOTION_ENHANCER_REPO_NAME}"
+  git clone "${NOTION_ENHANCER_REPO_URL}" "${NOTION_ENHANCER_REPO_DIRNAME}"
 fi
 
-pushd "${NOTION_ENHANCER_REPO_NAME}" > /dev/null
+pushd "${NOTION_ENHANCER_REPO_DIRNAME}" > /dev/null
 
 log "Checking out enhancer desktop..."
 git fetch
@@ -43,7 +43,7 @@ log "Installing enhancer desktop dependencies..."
 npm install
 
 log "Applying enhancer to the sources..."
-NOTION_ENHANCED_SRC="${WORKSPACE_BUILD_DIR}/${NOTION_ENHANCED_SRC_NAME}"
+NOTION_ENHANCED_SRC="${WORKSPACE_BUILD_DIR}/${NOTION_ENHANCED_SRC_DIRNAME}"
 
 # sources do not have node_modules yet, so just make an empty one
 mkdir -p "${NOTION_ENHANCED_SRC}/node_modules"
@@ -59,7 +59,7 @@ rm -vf "${NOTION_ENHANCED_SRC}/app"
 
 popd > /dev/null
 
-pushd "${NOTION_ENHANCED_SRC_NAME}" > /dev/null
+pushd "${NOTION_ENHANCED_SRC_DIRNAME}" > /dev/null
 
 # fix for enhancer module getting removed when installing dependencies
 mv node_modules/notion-enhancer shared/ && rmdir node_modules
@@ -68,17 +68,19 @@ jq '.dependencies += {"notion-enhancer": "file:shared/notion-enhancer"}' package
 log "Swapping out icons..."
 rm -vf icon.icns icon.png icon.ico 
 
-NOTION_ENHANCER_ICONS="shared/notion-enhancer/media"
+NOTION_ENHANCER_ICONS="shared/notion-enhancer/assets"
 
 cp "${NOTION_ENHANCER_ICONS}/colour-x512.png" icon.png
 
 log "Converting icon to multi-size ico for Windows"
 # http://www.imagemagick.org/Usage/thumbnails/#favicon
-convert "${NOTION_ENHANCER_ICONS}/colour-x512.png" -resize 256x256 \
+convert "${NOTION_ENHANCER_ICONS}/colour-x512.png" \
+  -debug all \
+  -resize 256x256 \
   -define icon:auto-resize="256,128,96,64,48,32,16" \
   icon.ico
 
-log "Converting icon to multi-size for Mac and Linux"
+log "Converting icon to multi-size icns for Mac and Linux"
 # https://askubuntu.com/questions/223215/how-can-i-convert-a-png-file-to-icns
 png2icns icon.icns \
   "${NOTION_ENHANCER_ICONS}/colour-x512.png" \

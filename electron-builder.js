@@ -42,7 +42,7 @@ module.exports = {
   extraMetadata: {
     description: productDescription,
   },
-  appId: 'com.github.notion-repackaged',
+  appId: 'com.github.notion-enhancer.notion-repackaged',
   protocols: [{ name: 'Notion', schemes: ['notion'] }],
   win: {
     icon: 'icon.ico',
